@@ -105,7 +105,7 @@ class AuthController extends Controller
 
     if (Auth::attempt(['phone_number' => $credentials['phone'], 'password' => $credentials['password']])) {
         $request->session()->regenerate();
-        return redirect()->route('dashboard')->with('success', 'Login berhasil!');
+        return redirect()->route('dashboard_user')->with('success', 'Login berhasil!');
     }
 
     return back()->withErrors(['phone' => 'Nomor HP atau password salah.'])->onlyInput('phone');

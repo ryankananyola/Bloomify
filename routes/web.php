@@ -13,9 +13,9 @@ Route::post('/register', [AuthController::class, 'registerWeb'])->name('register
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login.form');
 Route::post('/login', [AuthController::class, 'loginWeb'])->name('login.submit');
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware('auth')->name('dashboard');
+Route::get('/dashboard_user', function () {
+    return view('dashboard_user');
+})->middleware('auth')->name('dashboard_user');
 
-Route::post('/logout', [AuthController::class, 'logoutWeb'])->name('logout');
+Route::post('/logout', [AuthController::class, 'logoutWeb'])->name('logout.web');
 
