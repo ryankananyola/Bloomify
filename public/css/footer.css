@@ -6,7 +6,6 @@
     font-family: 'Poppins', sans-serif;
 }
 
-/* === Logo atas (Bloomify) === */
 .footer-top {
     text-align: left;
     margin-bottom: 40px;
@@ -20,7 +19,6 @@
     letter-spacing: 1px;
 }
 
-/* === Container utama (isi kolom) === */
 .footer-content {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -32,7 +30,6 @@
     text-align: left;
 }
 
-/* === Kolom umum === */
 .footer-column h3 {
     font-size: 15px;
     font-weight: 600;
@@ -90,14 +87,12 @@
     margin-bottom: 8px;
 }
 
-/* === Customer Service Icons === */
 .footer-column i {
     color: #E91E63;
     margin-right: 8px;
     font-size: 16px;
 }
 
-/* === Social Media === */
 .footer-socials {
     display: flex;
     justify-content: start;
@@ -116,7 +111,6 @@
     transform: translateY(-3px);
 }
 
-/* === Garis Bawah === */
 .footer hr {
     border: none;
     border-top: 1px solid #ddd;
@@ -124,7 +118,6 @@
     width: 90%;
 }
 
-/* === Bottom Section === */
 .footer-bottom {
     text-align: center;
     font-size: 13px;
@@ -146,7 +139,6 @@
     color: #E91E63;
 }
 
-/* === Responsive === */
 @media (max-width: 768px) {
     .footer-content {
         grid-template-columns: 1fr 1fr;

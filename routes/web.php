@@ -17,5 +17,10 @@ Route::get('/dashboard_user', function () {
     return view('dashboard_user');
 })->middleware('auth')->name('dashboard_user');
 
+Route::get('/florists-all', function () {
+    return view('users.florists_all');
+})->name('users.florists.all');
+
+
 Route::post('/logout', [AuthController::class, 'logoutWeb'])->name('logout.web');
 
