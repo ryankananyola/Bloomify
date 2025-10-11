@@ -28,24 +28,59 @@
 <section class="container py-5 fade-up">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="section-title mb-0">find your favorite flower shop right here!💐</h2>
-        <a href="{{ route('users.florists.all') }}" class="see-all-link">See All</a>
+        <a href="{{ route('user.florists_all') }}" class="see-all-link">See All</a>
     </div>
 
     <div class="row g-4">
-        @for ($i = 0; $i < 6; $i++)
-        <div class="col-md-4 fade-up">
-            <div class="card florist-card">
-                <img src="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=800&q=60" alt="Florist">
-                <div class="card-body">
-                    <h5>Kanihera Florist</h5>
-                    <p class="text-muted"><i class="bi bi-geo-alt"></i> Jl. Mawar No. 15, Bali</p>
-                    <div class="d-flex align-items-center">
-                        <i class="bi bi-star-fill text-warning me-1"></i> 4.8 (250 reviews)
+        @foreach ($florists as $florist)
+        <div class="col-md-4 florist-item fade-up">
+            <div class="florist-card border-0 shadow-sm rounded-4 overflow-hidden position-relative">
+
+                @php
+                    $now = now()->setTimezone('Asia/Jakarta');
+                    $open = \Carbon\Carbon::createFromFormat('H:i:s', $florist->open_time, 'Asia/Jakarta');
+                    $close = \Carbon\Carbon::createFromFormat('H:i:s', $florist->close_time, 'Asia/Jakarta');
+                @endphp
+
+                @if ($now->lt($open) || $now->gt($close))
+                    <span class="badge bg-danger position-absolute m-3 px-3 py-2 rounded-pill">Close</span>
+                @else
+                    <span class="badge bg-success position-absolute m-3 px-3 py-2 rounded-pill">Open</span>
+                @endif
+
+                <img src="{{ asset('storage/' . $florist->image) }}" 
+                     alt="{{ $florist->name }}" 
+                     class="florist-img">
+
+                <div class="card-body p-3">
+                    <h5 class="fw-semibold florist-name mb-1">{{ $florist->name }}</h5>
+
+                    <p class="text-muted small mb-2 d-flex align-items-center">
+                        <i class="bi bi-geo-alt me-1 text-pink"></i>
+                        <span class="text-truncate" style="max-width: 240px;">
+                            {{ $florist->address }}
+                        </span>
+                    </p>
+
+                    <div class="d-flex align-items-center justify-content-between mb-1">
+                        <small class="text-muted d-flex align-items-center">
+                            <i class="bi bi-tag me-1 text-pink"></i>
+                            Start From {{ number_format($florist->start_price, 0, ',', '.') }}
+                        </small>
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-star-fill text-warning me-1"></i>
+                            <small class="fw-semibold text-success">{{ number_format($florist->rating, 1) }}</small>
+                        </div>
                     </div>
+
+                    <small class="text-muted d-block">
+                        <i class="bi bi-clock me-1 text-pink"></i>
+                        Open {{ $florist->open_time_formatted }} - Closed {{ $florist->close_time_formatted }}
+                    </small>
                 </div>
             </div>
         </div>
-        @endfor
+        @endforeach
     </div>
 </section>
 
@@ -131,23 +166,23 @@
 </section>
 
 <script>
+document.querySelectorAll('.bouquet-scroll').forEach(scrollContainer => {
+    scrollContainer.addEventListener('wheel', (evt) => {
+        evt.preventDefault();
+        scrollContainer.scrollLeft += evt.deltaY;
+    });
+});
+</script>
+
+<script>
 document.addEventListener("DOMContentLoaded", function() {
     const elements = document.querySelectorAll('.fade-up');
     const observer = new IntersectionObserver(entries => {
         entries.forEach(entry => {
             if (entry.isIntersecting) entry.target.classList.add('show');
         });
-    }, { threshold: 0.2 });
+    }, { threshold: 0.15 });
     elements.forEach(el => observer.observe(el));
-});
-</script>
-
-<script>
-document.querySelectorAll('.bouquet-scroll').forEach(scrollContainer => {
-    scrollContainer.addEventListener('wheel', (evt) => {
-        evt.preventDefault();
-        scrollContainer.scrollLeft += evt.deltaY;
-    });
 });
 </script>
 
