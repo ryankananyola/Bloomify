@@ -14,4 +14,16 @@ class FloristController extends Controller
 
         return view('user.florists_all', compact('florists'));
     }
+
+    public function show($slug)
+    {
+        $florist = Florist::where('slug', $slug)->firstOrFail();
+
+        if ($florist->is_always_closed) {
+            return view('user.florists.closed', compact('florist'));
+        }
+
+        return view('user.florists.detail', compact('florist'));
+    }
+
 }

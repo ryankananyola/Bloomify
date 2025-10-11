@@ -22,5 +22,7 @@ Route::get('/dashboard_user', [DashboardUserController::class, 'index'])
 Route::get('/florists-all', [FloristController::class, 'index'])
     ->name('user.florists_all');
 
+Route::get('/florist/{slug}', [FloristController::class, 'show'])->name('florist.show');
+
 Route::post('/logout', [AuthController::class, 'logoutWeb'])->name('logout.web');
 

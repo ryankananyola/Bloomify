@@ -27,51 +27,53 @@
 
         <div class="row g-4 fade-up" style="animation-delay: 0.5s;">
             @foreach ($florists as $florist)
+                @php
+                    $currentTime = \Carbon\Carbon::now('Asia/Jakarta');
+                    $open = \Carbon\Carbon::createFromFormat('H:i:s', $florist->open_time, 'Asia/Jakarta');
+                    $close = \Carbon\Carbon::createFromFormat('H:i:s', $florist->close_time, 'Asia/Jakarta');
+                    $isClosed = ($florist->is_always_closed == true) || $currentTime->lt($open) || $currentTime->gt($close);
+                @endphp
+
                 <div class="col-md-4 florist-item">
-                    <div class="card border-0 shadow-sm h-100 florist-card position-relative rounded-4 overflow-hidden">
-                        @php
-                            $currentTime = now()->setTimezone('Asia/Jakarta');
-                            $open = \Carbon\Carbon::createFromFormat('H:i:s', $florist->open_time, 'Asia/Jakarta');
-                            $close = \Carbon\Carbon::createFromFormat('H:i:s', $florist->close_time, 'Asia/Jakarta');
-                        @endphp
+                    <a href="{{ route('florist.show', $florist->slug) }}" class="text-decoration-none text-dark">
+                        <div class="card border-0 shadow-sm h-100 florist-card position-relative rounded-4 overflow-hidden">
+                            
+                            <span class="badge {{ $isClosed ? 'bg-danger' : 'bg-success' }} position-absolute top-0 start-0 m-3 px-3 py-2 rounded-pill">
+                                {{ $isClosed ? 'Close' : 'Open' }}
+                            </span>
 
-                        @if ($currentTime->lt($open) || $currentTime->gt($close))
-                            <span class="badge bg-danger position-absolute top-0 start-0 m-3 px-3 py-2 rounded-pill">Close</span>
-                        @else
-                            <span class="badge bg-success position-absolute top-0 start-0 m-3 px-3 py-2 rounded-pill">Open</span>
-                        @endif
+                            <img src="{{ asset('storage/' . $florist->image) }}" 
+                                class="card-img-top" alt="Florist Image" 
+                                style="height: 220px; object-fit: cover;">
 
-                        <img src="{{ asset('storage/' . $florist->image) }}" 
-                            class="card-img-top" alt="Florist Image" 
-                            style="height: 220px; object-fit: cover;">
+                            <div class="card-body p-3">
+                                <h5 class="fw-semibold florist-name mb-1">{{ $florist->name }}</h5>
 
-                        <div class="card-body p-3">
-                            <h5 class="fw-semibold florist-name mb-1">{{ $florist->name }}</h5>
+                                <p class="text-muted small mb-2 d-flex align-items-center">
+                                    <i class="bi bi-geo-alt me-1 text-pink"></i>
+                                    <span class="text-truncate" style="max-width: 240px;">
+                                        {{ $florist->address }}
+                                    </span>
+                                </p>
 
-                            <p class="text-muted small mb-2 d-flex align-items-center">
-                                <i class="bi bi-geo-alt me-1 text-pink"></i>
-                                <span class="text-truncate" style="max-width: 240px;">
-                                    {{ $florist->address }}
-                                </span>
-                            </p>
-
-                            <div class="d-flex align-items-center justify-content-between mb-1">
-                                <small class="text-muted d-flex align-items-center">
-                                    <i class="bi bi-tag me-1 text-pink"></i>
-                                    Start From {{ number_format($florist->start_price, 0, ',', '.') }}
-                                </small>
-                                <div class="d-flex align-items-center">
-                                    <i class="bi bi-star-fill text-warning me-1"></i>
-                                    <small class="fw-semibold text-success">{{ number_format($florist->rating, 1) }}</small>
+                                <div class="d-flex align-items-center justify-content-between mb-1">
+                                    <small class="text-muted d-flex align-items-center">
+                                        <i class="bi bi-tag me-1 text-pink"></i>
+                                        Start From {{ number_format($florist->start_price, 0, ',', '.') }}
+                                    </small>
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-star-fill text-warning me-1"></i>
+                                        <small class="fw-semibold text-success">{{ number_format($florist->rating, 1) }}</small>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <small class="text-muted d-block">
-                                <i class="bi bi-clock me-1 text-pink"></i>
-                                Open {{ $florist->open_time_formatted }} - Closed {{ $florist->close_time_formatted }}
-                            </small>
+                                <small class="text-muted d-block">
+                                    <i class="bi bi-clock me-1 text-pink"></i>
+                                    Open {{ date('H:i', strtotime($florist->open_time)) }} - Closed {{ date('H:i', strtotime($florist->close_time)) }}
+                                </small>
+                            </div>
                         </div>
-                    </div>
+                    </a>
                 </div>
             @endforeach
         </div>
@@ -164,6 +166,5 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 });
 </script>
-
 
 @endsection

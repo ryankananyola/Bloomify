@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
+use App\Models\Products;
+use Illuminate\Support\Str;
 
 class Florist extends Model
 {
@@ -49,4 +51,19 @@ class Florist extends Model
         return \Carbon\Carbon::parse($this->close_time)->format('H:i');
     }
 
+    public function products()
+    {
+        return $this->hasMany(Products::class, 'florists_id');
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($florist) {
+            if (empty($florist->slug)) {
+                $florist->slug = Str::slug($florist->name);
+            }
+        });
+    }
 }
