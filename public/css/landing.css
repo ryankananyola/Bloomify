@@ -93,6 +93,10 @@ nav a i {
     z-index: 1;
 }
 
+.hero-content h1 {
+    font-family: 'Playfair Display', serif;
+}
+
 .location-select {
     display: flex;
     align-items: center;
