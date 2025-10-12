@@ -9,11 +9,6 @@ class Products extends Model
 {
     use HasFactory;
 
-    public function florist()
-    {
-        return $this->belongsTo(Florist::class, 'florists_id');
-    }
-
     protected $fillable = [
         'florists_id',
         'name',
@@ -26,5 +21,10 @@ class Products extends Model
     protected $casts = [
         'flowers' => 'array',
     ];
+
+    public function florist()
+    {
+        return $this->belongsTo(\App\Models\Florist::class, 'florists_id');
+    }
 
 }

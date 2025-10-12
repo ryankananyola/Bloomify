@@ -64,7 +64,7 @@
         <p>Bloomify made my first flower order such a lovely experience. The website was simple to use, and the bouquet arrived exactly as shown — maybe even better! The flowers were fresh, perfectly arranged, and smelled amazing.</p>
         <div class="quote">
           <p>“Every flower is a whisper of love — let Bloomify help you say it beautifully.”</p>
-          <img src="{{ asset('images/flower-illustration.png') }}" alt="Flower illustration" class="illustration">
+          <img src="{{ asset('assets/images/signup.png') }}" alt="Flower illustration" class="illustration">
         </div>
       </div>
     </div>

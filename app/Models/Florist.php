@@ -66,4 +66,9 @@ class Florist extends Model
             }
         });
     }
+
+    public function testimonials()
+    {
+        return $this->hasMany(\App\Models\Testimonial::class, 'florist_id');
+    }
 }

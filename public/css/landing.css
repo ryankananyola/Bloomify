@@ -204,7 +204,7 @@ nav a i {
     cursor: pointer;
     margin-top: 25px;
     transition: all 0.3s ease;
-    text-decoration: none; /* biar kalau button pakai <a> tidak ada underline */
+    text-decoration: none; 
 }
 
 .learn-btn:hover {
