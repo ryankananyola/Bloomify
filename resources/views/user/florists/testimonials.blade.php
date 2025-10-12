@@ -41,10 +41,7 @@
                     </p>
 
                     <div class="d-flex align-items-center">
-                        <img src="https://i.pravatar.cc/60?u={{ $testimonial->user_id }}" 
-                             alt="User Avatar" 
-                             class="rounded-circle me-3 shadow-sm"
-                             width="55" height="55">
+                        <img src="https://i.pravatar.cc/60?u={{ $testimonial->user_id }}" alt="User Avatar" class="rounded-circle me-3 shadow-sm" width="55" height="55">
                         <div>
                             <div class="fw-semibold" style="color:#333;">
                                 {{ $testimonial->user->full_name ?? 'Anonymous' }}
@@ -63,9 +60,7 @@
             </div>
 
             <div class="text-center mt-5">
-                <a href="{{ url()->previous() }}" 
-                   class="btn rounded-pill px-4 py-2 fw-semibold text-white shadow-sm"
-                   style="background-color:#e64b7d;">
+                <a href="{{ url()->previous() }}" class="btn rounded-pill px-4 py-2 fw-semibold text-white shadow-sm" style="background-color:#e64b7d;">
                     ← Back to Florist
                 </a>
             </div>

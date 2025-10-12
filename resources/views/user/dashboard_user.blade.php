@@ -167,16 +167,16 @@
 
         <div class="instagram-collage">
             <div class="insta-item item-1">
-                <img src="{{ asset('storage/uploads/products/kaninara/blossom.png') }}" alt="Inspiration 1">
+                <img src="{{ asset('storage/uploads/products/instagram/item1.png') }}" alt="Inspiration 1">
             </div>
             <div class="insta-item item-2">
-                <img src="{{ asset('storage/uploads/products/kaning/velvetpromise.png') }}" alt="Inspiration 2">
+                <img src="{{ asset('storage/uploads/products/instagram/item2.png') }}" alt="Inspiration 2">
             </div>
             <div class="insta-item item-3">
-                <img src="{{ asset('storage/uploads/products/jardinelle/crimsonroyale.png') }}" alt="Inspiration 3">
+                <img src="{{ asset('storage/uploads/products/instagram/item3.png') }}" alt="Inspiration 3">
             </div>
             <div class="insta-item item-4">
-                <img src="{{ asset('storage/uploads/products/beverly/honeybloom.png') }}" alt="Inspiration 4">
+                <img src="{{ asset('storage/uploads/products/instagram/item4.png') }}" alt="Inspiration 4">
             </div>
         </div>
     </div>

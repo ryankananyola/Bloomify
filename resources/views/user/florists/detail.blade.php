@@ -23,8 +23,7 @@
         </p>
 
         <div class="mb-5 position-relative" style="max-width: 500px; margin: 0 auto;">
-            <i class="bi bi-search position-absolute"
-               style="left: 18px; top: 50%; transform: translateY(-50%); color: #e64b7d; font-size: 1.2rem;"></i>
+            <i class="bi bi-search position-absolute" style="left: 18px; top: 50%; transform: translateY(-50%); color: #e64b7d; font-size: 1.2rem;"></i>
             <input type="text"
                    class="form-control rounded-pill ps-5 shadow-sm"
                    placeholder="Search here ya dear!"
@@ -74,9 +73,12 @@
                         <div class="card-body">
                             <h6 class="fw-semibold mb-1">{{ $product->name }}</h6>
                             <p class="text-muted small mb-2">Harga: Rp {{ number_format($product->price, 0, ',', '.') }}</p>
-                            <a href="#" class="btn btn-sm rounded-pill text-white w-100" style="background-color:#e64b7d;">
+                            <a href="{{ route('product.show', $product->slug) }}" 
+                                class="btn btn-sm rounded-pill text-white w-100" 
+                                style="background-color:#e64b7d;">
                                 Lihat Detail
                             </a>
+
                         </div>
                     </div>
                 </div>
@@ -116,10 +118,7 @@
                 </p>
 
                 <div class="d-flex align-items-center mt-3">
-                    <img src="https://i.pravatar.cc/50?u={{ $testimonial->user_id }}" 
-                         alt="User Avatar" 
-                         class="rounded-circle me-3" 
-                         width="45" height="45">
+                    <img src="https://i.pravatar.cc/50?u={{ $testimonial->user_id }}" alt="User Avatar" class="rounded-circle me-3" width="45" height="45">
 
                     <div>
                         <div class="fw-semibold" style="color:#333;">
@@ -135,9 +134,7 @@
 
         @if($florist->testimonials->count() > 2)
             <div class="text-center mt-4">
-                <a href="{{ route('florist.testimonials.detail', $florist->id) }}"
-                   class="btn rounded-pill px-4 py-2 text-white fw-semibold"
-                   style="background-color: #e64b7d;">
+                <a href="{{ route('florist.testimonials.detail', $florist->id) }}" class="btn rounded-pill px-4 py-2 text-white fw-semibold" style="background-color: #e64b7d;">
                     See More Testimonials
                 </a>
             </div>
