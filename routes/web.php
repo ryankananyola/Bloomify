@@ -40,7 +40,7 @@ Route::post('/testimonials/store', [TestimonialController::class, 'store'])
 Route::get('/florist/{id}/testimonials', [TestimonialController::class, 'showFloristTestimonials'])
     ->name('florist.testimonials.detail');
     
-Route::get('/product/{slug}', [ProductController::class, 'show'])
+Route::get('/florist/{florist_slug}/product/{product_slug}', [ProductController::class, 'show'])
     ->name('product.show');
 
 Route::post('/order', [OrderController::class, 'store'])

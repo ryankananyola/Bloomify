@@ -657,4 +657,14 @@ body {
     }
 }
 
+.btn-pink {
+    background-color: #e64b7d;
+    color: #fff;
+    border: none;
+    transition: 0.3s ease;
+}
 
+.btn-pink:hover {
+    background-color: #c43e6a;
+    color: #fff;
+}

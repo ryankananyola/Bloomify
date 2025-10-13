@@ -118,6 +118,14 @@
                                 {{ $product->florist->name ?? 'Unknown Florist' }}
                             </span>
                         </p>
+                        <a href="{{ route('product.show', [
+                                'florist_slug' => $product->florist->slug,
+                                'product_slug' => $product->slug
+                            ]) }}" 
+                            class="btn btn-sm btn-pink mt-2 px-3 py-2 rounded-pill shadow-sm">
+                            <i class="bi bi-eye me-1"></i> Lihat Detail
+                        </a>
+
                     </div>
                 </div>
             @empty

@@ -19,7 +19,16 @@ class FloristController extends Controller
     {
         $florist = Florist::where('slug', $slug)->firstOrFail();
 
-        if ($florist->is_always_closed) {
+        $currentTime = \Carbon\Carbon::now('Asia/Jakarta');
+
+        $open = \Carbon\Carbon::createFromFormat('H:i:s', $florist->open_time, 'Asia/Jakarta');
+        $close = \Carbon\Carbon::createFromFormat('H:i:s', $florist->close_time, 'Asia/Jakarta');
+
+        $isClosed = ($florist->is_always_closed == true)
+            || $currentTime->lt($open)
+            || $currentTime->gt($close);
+
+        if ($isClosed) {
             return view('user.florists.closed', compact('florist'));
         }
 

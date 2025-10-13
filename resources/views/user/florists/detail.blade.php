@@ -73,10 +73,12 @@
                         <div class="card-body">
                             <h6 class="fw-semibold mb-1">{{ $product->name }}</h6>
                             <p class="text-muted small mb-2">Harga: Rp {{ number_format($product->price, 0, ',', '.') }}</p>
-                            <a href="{{ route('product.show', $product->slug) }}" 
-                                class="btn btn-sm rounded-pill text-white w-100" 
-                                style="background-color:#e64b7d;">
-                                Lihat Detail
+                            <a href="{{ route('product.show', [
+                                'florist_slug' => $product->florist->slug,
+                                'product_slug' => $product->slug
+                            ]) }}" 
+                            class="btn btn-sm btn-pink mt-2 px-3 py-2 rounded-pill shadow-sm">
+                                <i class="bi bi-eye me-1"></i> Lihat Detail
                             </a>
 
                         </div>

@@ -10,7 +10,14 @@
         </div>
 
         <div class="d-flex justify-content-center">
-            <div class="form-box p-4 rounded-4 shadow-sm" style="background-color:#fff; max-width:800px; width:90%;">
+            <div class="form-box p-4 rounded-4 shadow-sm" 
+                style="background: rgba(255, 240, 245, 0.55);
+                       backdrop-filter: blur(10px);
+                       -webkit-backdrop-filter: blur(10px);
+                       border: 1px solid rgba(230, 75, 125, 0.2);
+                       max-width:800px; 
+                       width:90%;">
+
                 <div class="d-flex align-items-center mb-4 border-bottom pb-3">
                     <img src="{{ asset('storage/' . $product->image) }}" 
                         alt="{{ $product->name }}" 
@@ -44,7 +51,7 @@
 
                         <div class="col-md-4">
                             <label class="form-label fw-semibold">Pick Up</label>
-                            <select name="pickup_method" class="form-select border-pink rounded-3" required>
+                            <select id="pickup_method" name="pickup_method" class="form-select border-pink rounded-3" required>
                                 <option selected disabled>Choice</option>
                                 <option value="Pick Up">Pick Up</option>
                                 <option value="Delivery Go-Send">Delivery Go-Send</option>
@@ -82,12 +89,12 @@
 
                         <div class="col-12">
                             <label class="form-label fw-semibold">Address</label>
-                            <textarea name="address" class="form-control border-pink rounded-3" rows="3" placeholder="Masukkan alamat kamu"></textarea>
+                            <textarea id="address_field" name="address" class="form-control border-pink rounded-3" rows="3" placeholder="Silahkan Pilih Jenis Pick Up" disabled></textarea>
                         </div>
 
                         <div class="col-12">
                             <label class="form-label fw-semibold">Greeting Message</label>
-                            <textarea id="greeting_message" name="greeting_message" class="form-control border-pink rounded-3" rows="3" placeholder="Tulis ucapan (opsional)"></textarea>
+                            <textarea id="greeting_message" name="greeting_message" class="form-control border-pink rounded-3" rows="3" placeholder="Silahkan Pilih Menggunakan Greeting Card atau Tidak" disabled></textarea>
                         </div>
 
                         <div class="col-12">
@@ -106,11 +113,17 @@
 
                         <div class="col-12 text-end mt-4">
                             <button type="button" 
-                                    class="btn btn-light border rounded-pill px-4 me-2" 
-                                    onclick="toggleOrderForm(event)">Cancel</button>
+                                class="btn btn-light border rounded-pill px-4 me-2"
+                                onclick="toggleOrderForm(event)">
+                                <i class="bi bi-x-circle"></i> Cancel
+                            </button>
+
                             <button type="submit" 
-                                    class="btn text-white fw-semibold rounded-pill px-5" 
-                                    style="background-color:#e64b7d;">Order</button>
+                                class="btn text-white fw-semibold rounded-pill px-5"
+                                style="background-color:#e64b7d;">
+                                <i class="bi bi-bag-heart"></i> Order
+                            </button>
+
                         </div>
                     </div>
                 </form>
@@ -121,8 +134,13 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
+    const pickupMethod = document.getElementById('pickup_method');
+    const addressField = document.getElementById('address_field');
     const greetingCardSelect = document.getElementById('greeting_card');
     const greetingMessageField = document.getElementById('greeting_message');
+
+    addressField.disabled = true;
+    greetingMessageField.disabled = true;
 
     greetingCardSelect.addEventListener('change', function() {
         if (this.value === '1') { 
@@ -133,6 +151,17 @@ document.addEventListener("DOMContentLoaded", function() {
             greetingMessageField.disabled = true;
             greetingMessageField.value = "";
             greetingMessageField.placeholder = "Tidak menggunakan kartu ucapan";
+        }
+    });
+
+    pickupMethod.addEventListener('change', function() {
+        if (this.value === 'Pick Up') {
+            addressField.disabled = true;
+            addressField.value = "";
+            addressField.placeholder = "Tidak perlu diisi untuk Pick Up";
+        } else {
+            addressField.disabled = false;
+            addressField.placeholder = "Masukkan alamat pengantaran kamu 💐";
         }
     });
 });

@@ -17,7 +17,7 @@
 
     <nav class="navbar navbar-expand-lg fixed-top">
         <div class="container py-2">
-            <a class="navbar-brand fw-bold" href="#">Bloomify</a>
+            <a class="navbar-brand fw-bold" href="{{ route('dashboard_user') }}">Bloomify</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>

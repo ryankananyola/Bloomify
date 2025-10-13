@@ -30,10 +30,17 @@ class OrderController extends Controller
 
         $product = Products::findOrFail($request->product_id);
 
-        $total = $product->price * $request->quantity;
-        if ($request->paper_bag == 'Paper Bag') {
-            $total += 10000;
-        }
+        $productPrice = $product->price * $request->quantity;
+
+        $paperBagFee = (strtolower($request->paper_bag) === 'yes' || $request->paper_bag === 'Paper Bag')
+            ? 10000 * $request->quantity
+            : 0;
+
+        $deliveryFee = (strtolower($request->pickup_method) === 'pick up') ? 0 : 26000;
+
+        $adminFee = 9500;
+
+        $total = $productPrice + $paperBagFee + $deliveryFee + $adminFee;
 
         $slug = Str::slug($product->name . '-' . Str::random(5));
 
@@ -51,9 +58,9 @@ class OrderController extends Controller
             'additional_request' => $request->additional_request,
             'address' => $request->address,
             'payment_method' => $request->payment_method,
-            'total_price' => $total,
+            'total_price' => $total, 
             'status' => 'Pending',
-            'slug' => $slug, 
+            'slug' => $slug,
         ]);
 
         return redirect()->route('order.show', $order->slug);
@@ -66,18 +73,21 @@ class OrderController extends Controller
 
     public function cancel(Order $order)
     {
-        $productSlug = $order->product->slug ?? null;
+        $product = $order->product;
+
+        $floristSlug = $product->florist->slug ?? null;
+        $productSlug = $product->slug ?? null;
 
         $order->delete();
 
-        if ($productSlug) {
-            return redirect()->route('product.show', $productSlug)
-                            ->with('success', 'Pesanan telah dibatalkan 💔');
+        if ($floristSlug && $productSlug) {
+            return redirect()->route('product.show', [
+                'florist_slug' => $floristSlug,
+                'product_slug' => $productSlug,
+            ])->with('success', 'Pesanan telah dibatalkan 💔');
         }
 
-        // Kalau produk tidak ditemukan, balik ke dashboard
         return redirect()->route('dashboard_user')
                         ->with('success', 'Pesanan telah dibatalkan 💔');
     }
-
 }

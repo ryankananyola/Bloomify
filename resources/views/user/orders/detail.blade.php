@@ -12,10 +12,11 @@
     <hr style="border:1px solid #f5c6d6; margin: 20px 0;">
 
     <h5 class="fw-semibold mb-3" style="color:#e64b7d;">Detail Pesanan</h5>
-    <div class="row align-items-center">
-        <div class="col-md-4 d-flex justify-content-center">
-            <div class="p-3 rounded-4 shadow-sm" 
-                style="background-color:#fff0f5; border:2px solid #f8c8dc; width:100%; max-width:280px;">
+
+    <div class="row align-items-start">
+        <div class="col-md-4 d-flex justify-content-center mb-4 mb-md-0">
+            <div class="p-3 rounded-4" 
+                style="border:2px solid #f8c8dc; background-color:transparent; width:100%; max-width:280px;">
                 <img src="{{ asset('storage/' . $order->product->image) }}" 
                     alt="{{ $order->product->name }}" 
                     class="rounded-4 w-100" 
@@ -23,7 +24,12 @@
             </div>
         </div>
 
-        <div class="col-md-8 mt-3 mt-md-0">
+        <div class="col-md-8">
+            @php
+                setlocale(LC_TIME, 'id_ID.UTF-8');
+                \Carbon\Carbon::setLocale('id');
+            @endphp
+
             <table class="table table-borderless" style="font-size: 0.95rem;">
                 <tbody>
                     <tr><td style="width:160px;">Flower Name</td><td>: {{ $order->product->name }}</td></tr>
@@ -31,8 +37,14 @@
                     <tr><td>Phone Number</td><td>: {{ $order->customer_phone }}</td></tr>
                     <tr><td>Order Qty</td><td>: {{ $order->quantity }}</td></tr>
                     <tr><td>Pick Up</td><td>: {{ $order->pickup_method }}</td></tr>
-                    <tr><td>Pick Up Date</td><td>: {{ \Carbon\Carbon::parse($order->pickup_date)->translatedFormat('l, d F Y') }}</td></tr>
-                    <tr><td>Time</td><td>: {{ $order->pickup_time }}</td></tr>
+                    <tr>
+                        <td>Pick Up Date</td>
+                        <td>: {{ \Carbon\Carbon::parse($order->pickup_date)->isoFormat('dddd, D MMMM Y') }}</td>
+                    </tr>
+                    <tr>
+                        <td>Time</td>
+                        <td>: {{ \Carbon\Carbon::parse($order->pickup_time)->format('H:i') }} WIB</td>
+                    </tr>
                     <tr><td>Address</td><td>: {{ $order->address ?? '-' }}</td></tr>
                     <tr><td>Paper Bag</td><td>: {{ $order->paper_bag }}</td></tr>
                     <tr><td>Greeting Card</td><td>: {{ $order->greeting_card ? 'Yes' : 'No' }}</td></tr>
@@ -44,7 +56,7 @@
         </div>
     </div>
 
-    <h5 class="fw-semibold mb-3 mt-4" style="color:#e64b7d;">Payment</h6>
+    <h5 class="fw-semibold mb-3 mt-4" style="color:#e64b7d;">Payment</h5>
     <div class="payment-section mt-3 p-4 rounded-4 shadow-sm">
         <div class="voucher-box mb-4">
             <label class="fw-semibold mb-2 d-block" style="color:#e64b7d;">Got a voucher code, Blomy? 💖</label>
@@ -54,32 +66,55 @@
             </div>
         </div>
 
-        <div class="payment-summary bg-white rounded-4 p-3">
+        @php
+            $unitPrice = (int) $order->product->price;
+            $qty = (int) $order->quantity;
+
+            $productSubtotal = $unitPrice * $qty;
+
+            $paperBagFee = (strtolower($order->paper_bag) === 'yes' || strtolower($order->paper_bag) === 'paper bag')
+                ? 10000 * $qty
+                : 0;
+
+            $deliveryFee = (strtolower($order->pickup_method) === 'pick up') ? 0 : 26000;
+
+            $adminFee = 9500;
+
+            $finalTotal = $productSubtotal + $paperBagFee + $deliveryFee + $adminFee;
+        @endphp
+
+        <div class="payment-summary rounded-4 p-3" style="background-color:transparent;">
             <table class="table table-borderless mb-0" style="font-size:0.95rem;">
                 <tbody>
                     <tr>
-                        <td class="text-secondary">Sub Total</td>
-                        <td class="text-end">Rp{{ number_format($order->product->price, 0, ',', '.') }}</td>
+                        <td class="text-secondary">Sub Total (per item)</td>
+                        <td class="text-end">Rp{{ number_format($unitPrice, 0, ',', '.') }}</td>
                     </tr>
                     <tr>
                         <td class="text-secondary">Quantity</td>
-                        <td class="text-end">{{ $order->quantity }}</td>
+                        <td class="text-end">{{ $qty }}</td>
                     </tr>
+                    @if($paperBagFee > 0)
+                    <tr>
+                        <td class="text-secondary">Paper Bag ({{ $qty }}x)</td>
+                        <td class="text-end">Rp{{ number_format($paperBagFee, 0, ',', '.') }}</td>
+                    </tr>
+                    @endif
                     <tr>
                         <td class="text-secondary">Delivery Fee</td>
-                        <td class="text-end">Rp26.000</td>
+                        <td class="text-end">
+                            {{ $deliveryFee > 0 ? 'Rp' . number_format($deliveryFee, 0, ',', '.') : '-' }}
+                        </td>
                     </tr>
                     <tr>
                         <td class="text-secondary">Admin Fee</td>
-                        <td class="text-end">Rp9.500</td>
-                    </tr>
-                    <tr>
-                        <td class="text-secondary">Voucher</td>
-                        <td class="text-end">-</td>
+                        <td class="text-end">Rp{{ number_format($adminFee, 0, ',', '.') }}</td>
                     </tr>
                     <tr class="border-top">
                         <td class="fw-bold pt-3" style="color:#e64b7d;">Total</td>
-                        <td class="fw-bold text-danger text-end pt-3">Rp{{ number_format($order->total_price + 26000 + 9500, 0, ',', '.') }}</td>
+                        <td class="fw-bold text-danger text-end pt-3">
+                            Rp{{ number_format($finalTotal, 0, ',', '.') }}
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -103,6 +138,10 @@
 </div>
 
 <style>
+.table, .table tbody, .table td, .table th {
+    background-color: transparent !important;
+}
+
 .border-pink {
     border: 1.5px solid #e64b7d;
 }
@@ -110,16 +149,16 @@
     border-color: #e64b7d;
     box-shadow: 0 0 0 0.2rem rgba(230,75,125,0.15);
 }
+
 .payment-section {
     border: 2px solid #f8c8d9;
-    background-color: #fff9fb;
+    background-color: transparent;
     transition: all 0.3s ease;
 }
 .payment-section:hover {
     box-shadow: 0 4px 15px rgba(230, 75, 125, 0.15);
     transform: translateY(-2px);
 }
-
 .voucher-box .form-control {
     border: 1.5px solid #f5b5c6;
     font-size: 0.9rem;
@@ -131,6 +170,5 @@
 .table td {
     padding: 0.45rem 0.5rem;
 }
-
 </style>
 @endsection
