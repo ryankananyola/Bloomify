@@ -131,9 +131,12 @@
             </button>
         </form>
 
-        <a href="#" class="btn text-white rounded-pill px-5" style="background-color:#e64b7d;">
+        <a href="{{ route('payment.show', $order->slug) }}" 
+            class="btn text-white rounded-pill px-5" 
+            style="background-color:#e64b7d;">
             <i class="bi bi-bag-heart"></i> Checkout and Payment
         </a>
+
     </div>
 </div>
 

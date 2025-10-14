@@ -30,6 +30,9 @@ Route::get('/dashboard_user', [DashboardUserController::class, 'index'])
     ->middleware('auth')
     ->name('dashboard_user');
 
+Route::get('/user/search', [DashboardUserController::class, 'search'])
+    ->name('search');
+
 Route::get('/florists-all', [FloristController::class, 'index'])
     ->name('user.florists_all');
 Route::get('/florist/{slug}', [FloristController::class, 'show'])
@@ -42,6 +45,8 @@ Route::get('/florist/{id}/testimonials', [TestimonialController::class, 'showFlo
     
 Route::get('/florist/{florist_slug}/product/{product_slug}', [ProductController::class, 'show'])
     ->name('product.show');
+Route::get('/florist/{slug}/search', [FloristController::class, 'search'])
+    ->name('florist.search');
 
 Route::post('/order', [OrderController::class, 'store'])
     ->name('order.store');
@@ -49,6 +54,11 @@ Route::get('/order/{order:slug}', [OrderController::class, 'show'])
     ->name('order.show');
 Route::delete('/order/{order:slug}/cancel', [OrderController::class, 'cancel'])
     ->name('order.cancel');
+Route::get('/payment/{slug}', [OrderController::class, 'showPayment'])
+    ->name('payment.show');
+Route::post('/payment/{slug}/submit', [OrderController::class, 'submitPayment'])
+    ->name('payment.submit');
+
 
 
 

@@ -90,4 +90,35 @@ class OrderController extends Controller
         return redirect()->route('dashboard_user')
                         ->with('success', 'Pesanan telah dibatalkan 💔');
     }
+
+    public function showPayment($slug)
+    {
+        $order = Order::where('slug', $slug)->firstOrFail();
+        return view('user.orders.payment', compact('order'));
+    }
+
+    public function submitPayment(Request $request, $slug)
+    {
+        $order = Order::where('slug', $slug)->firstOrFail();
+
+        $validated = $request->validate([
+            'payment_method' => 'required|string|max:100',
+            'sender_name' => 'required|string|max:100',
+            'payment_proof' => 'required|image|mimes:jpg,jpeg,png|max:2048',
+        ]);
+
+        $proofPath = $request->file('payment_proof')->store('order/payment', 'public');
+
+        $order->update([
+            'payment_method' => $validated['payment_method'],
+            'sender_name' => $validated['sender_name'], 
+            'payment_proof' => $proofPath,
+            'payment_status' => 'Paid', 
+            'status' => 'Confirmed',
+        ]);
+
+        return redirect()->route('dashboard_user')
+            ->with('success', 'Bukti pembayaran berhasil dikirim 💖');
+    }
+
 }

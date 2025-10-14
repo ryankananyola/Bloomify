@@ -23,16 +23,18 @@
         </p>
 
         <div class="mb-5 position-relative" style="max-width: 500px; margin: 0 auto;">
-            <i class="bi bi-search position-absolute" style="left: 18px; top: 50%; transform: translateY(-50%); color: #e64b7d; font-size: 1.2rem;"></i>
+            <i class="bi bi-search position-absolute"
+            style="left: 18px; top: 50%; transform: translateY(-50%); color: #e64b7d; font-size: 1.2rem;"></i>
             <input type="text"
-                   class="form-control rounded-pill ps-5 shadow-sm"
-                   placeholder="Search here ya dear!"
-                   style="border: 1.5px solid #e64b7d;">
+                id="searchInput"
+                class="form-control rounded-pill ps-5 shadow-sm"
+                placeholder="Search here ya dear!"
+                style="border: 1.5px solid #e64b7d;">
         </div>
     </div>
 </section>
 
-<section class="position-relative text-center py-5"
+<section id="customSection" class="position-relative text-center py-5"
          style="
              background: url('{{ asset('assets/images/landing.jpg') }}') no-repeat center center/cover;
              min-height: 380px;
@@ -80,7 +82,6 @@
                             class="btn btn-sm btn-pink mt-2 px-3 py-2 rounded-pill shadow-sm">
                                 <i class="bi bi-eye me-1"></i> Lihat Detail
                             </a>
-
                         </div>
                     </div>
                 </div>
@@ -159,4 +160,73 @@
         }
     }
 </style>
+
+<script>
+document.getElementById('searchInput').addEventListener('input', function () {
+    const query = this.value.trim();
+    const floristSlug = "{{ $florist->slug }}";
+    const resultContainer = document.querySelector('.row.g-4.justify-content-center');
+    const customSection = document.getElementById('customSection');
+
+    if (query.length < 1) {
+        customSection.style.display = "block"; // tampil lagi
+        fetch(`/florist/${floristSlug}/search?q=`)
+            .then(res => res.json())
+            .then(data => {
+                resultContainer.innerHTML = '';
+                data.forEach(product => {
+                    resultContainer.innerHTML += renderProduct(product, floristSlug);
+                });
+            });
+        return;
+    }
+
+    // Sembunyikan section custom bouquet
+    customSection.style.display = "none";
+
+    fetch(`/florist/${floristSlug}/search?q=${encodeURIComponent(query)}`)
+        .then(res => {
+            if (!res.ok) throw new Error("Gagal ambil data");
+            return res.json();
+        })
+        .then(data => {
+            resultContainer.innerHTML = '';
+
+            if (!data.length) {
+                resultContainer.innerHTML = `<p class="text-muted mt-4">Tidak ada hasil untuk "<strong>${query}</strong>" 🌸</p>`;
+                return;
+            }
+
+            data.forEach(product => {
+                resultContainer.innerHTML += renderProduct(product, floristSlug);
+            });
+        })
+        .catch(err => {
+            console.error(err);
+            resultContainer.innerHTML = `<p class="text-danger">Terjadi kesalahan mengambil data.</p>`;
+        });
+});
+
+function renderProduct(product, floristSlug) {
+    return `
+        <div class="col-lg-3 col-md-4 col-sm-6">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <img src="/storage/${product.image}" 
+                     class="card-img-top rounded-top-4" 
+                     style="height:220px; object-fit:cover;">
+                <div class="card-body">
+                    <h6 class="fw-semibold mb-1">${product.name}</h6>
+                    <p class="text-muted small mb-2">Harga: Rp ${new Intl.NumberFormat('id-ID').format(product.price)}</p>
+                    <a href="/florist/${floristSlug}/product/${product.slug}" 
+                        class="btn btn-sm btn-pink mt-2 px-3 py-2 rounded-pill shadow-sm">
+                            <i class="bi bi-eye me-1"></i> Lihat Detail
+                    </a>
+                </div>
+            </div>
+        </div>
+    `;
+}
+</script>
+
+
 @endsection

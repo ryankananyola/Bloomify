@@ -35,4 +35,20 @@ class FloristController extends Controller
         return view('user.florists.detail', compact('florist'));
     }
 
+    public function search(Request $request, $slug)
+    {
+        $florist = \App\Models\Florist::where('slug', $slug)->firstOrFail();
+
+        $query = $request->get('q');
+
+        $products = $florist->products()
+            ->where(function ($q) use ($query) {
+                $q->where('name', 'like', "%{$query}%")
+                ->orWhere('description', 'like', "%{$query}%");
+            })
+            ->get();
+
+        return response()->json($products);
+    }
+
 }

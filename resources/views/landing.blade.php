@@ -18,7 +18,7 @@
     <header class="navbar">
         <div class="logo">Bloomify</div>
         <nav>
-            <a href="#">
+            <a href="{{ route('login.form') }}">
                 <i class="bi bi-cart3"></i> Cart
             </a>
             <a href="{{ route('login.form') }}">

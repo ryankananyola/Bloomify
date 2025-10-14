@@ -26,4 +26,27 @@ class DashboardUserController extends Controller
 
         return view('user.dashboard_user', compact('florists', 'topProducts'));
     }
+
+    public function search(Request $request)
+    {
+        $query = $request->get('q');
+
+        $florists = Florist::where('name', 'like', "%{$query}%")
+            ->orWhere('address', 'like', "%{$query}%")
+            ->take(5)
+            ->get(['id', 'name', 'slug', 'address', 'rating', 'image']);
+
+        $products = Products::with('florist:id,name,slug')
+            ->where('name', 'like', "%{$query}%")
+            ->orWhereHas('florist', function ($q) use ($query) {
+                $q->where('name', 'like', "%{$query}%");
+            })
+            ->take(8)
+            ->get(['id', 'name', 'slug', 'price', 'image', 'florists_id']);
+
+        return response()->json([
+            'florists' => $florists,
+            'products' => $products
+        ]);
+    }
 }

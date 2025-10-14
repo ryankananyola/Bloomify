@@ -9,7 +9,7 @@
         <p>Start your day with a bloom. Let the good mood begin!</p>
         <div class="hero-search position-relative">
             <i class="bi bi-search search-icon"></i>
-            <input type="text" class="form-control ps-5" placeholder="Search here ya dear...">
+            <input type="text" id="searchInput" class="form-control ps-5" placeholder="Search here ya dear...">
         </div>
     </div>
 </section>
@@ -23,6 +23,12 @@
             <input type="text" class="form-control rounded-pill" placeholder="📍 Jl. Tirtoboyeh No.1, Babarsari, Yogyakarta">
         </div>
     </div>
+</div>
+
+<div id="searchResults" class="mt-5 container" style="display:none;">
+    <h5 class="fw-bold text-pink mb-3">Search Results 🌷</h5>
+    <div id="searchFlorists"></div>
+    <div id="searchProducts" class="mt-2"></div>
 </div>
 
 <section class="container py-5 fade-up">
@@ -118,13 +124,19 @@
                                 {{ $product->florist->name ?? 'Unknown Florist' }}
                             </span>
                         </p>
-                        <a href="{{ route('product.show', [
-                                'florist_slug' => $product->florist->slug,
-                                'product_slug' => $product->slug
-                            ]) }}" 
-                            class="btn btn-sm btn-pink mt-2 px-3 py-2 rounded-pill shadow-sm">
-                            <i class="bi bi-eye me-1"></i> Lihat Detail
-                        </a>
+                        @if ($product->florist && $product->florist->slug && $product->slug)
+                            <a href="{{ route('product.show', [
+                                    'florist_slug' => $product->florist->slug,
+                                    'product_slug' => $product->slug
+                                ]) }}" 
+                                class="btn btn-sm btn-pink mt-2 px-3 py-2 rounded-pill shadow-sm">
+                                <i class="bi bi-eye me-1"></i> Lihat Detail
+                            </a>
+                        @else
+                            <button class="btn btn-sm btn-pink mt-2 px-3 py-2 rounded-pill shadow-sm" disabled>
+                                <i class="bi bi-eye me-1"></i> Lihat Detail
+                            </button>
+                        @endif
 
                     </div>
                 </div>
@@ -137,30 +149,50 @@
 
 <section class="testimonials py-5 fade-up">
     <div class="container text-center">
-        <h3 class="section-title">hear what our lovely customers say about Bloomify 🌷</h3>
-        <div class="row g-4 mt-4">
+        <h3 class="section-title mb-4">
+            hear what our lovely customers say about Bloomify 🌷
+        </h3>
+
+        <div class="row g-4 mt-4 justify-content-center">
             <div class="col-md-4 fade-up">
-                <div class="testimonial-card p-4">
-                    <div class="stars">★★★★★</div>
-                    <p>"Aku benar-benar terkesan dengan pelayanannya! Bunga-bunganya segar dan dikemas dengan sangat indah."</p>
-                    <h6 class="mt-3 mb-0">Rina Sariwati</h6>
-                    <small class="text-muted">Content Creator</small>
+                <div class="testimonial-card p-4 shadow-sm rounded-4 position-relative">
+                    <div class="d-flex flex-column align-items-center">
+                        <img src="https://i.pravatar.cc/100?u=rina" 
+                             alt="Rina Sariwati" 
+                             class="rounded-circle mb-3 shadow-sm" width="80" height="80">
+                        <div class="stars text-warning fs-5 mb-2">★★★★★</div>
+                        <p class="text-muted mb-3">"Aku benar-benar terkesan dengan pelayanannya! Bunga-bunganya segar dan dikemas dengan sangat indah."</p>
+                        <h6 class="fw-semibold mb-0">Rina Sariwati</h6>
+                        <small class="text-muted">Content Creator</small>
+                    </div>
                 </div>
             </div>
+
             <div class="col-md-4 fade-up">
-                <div class="testimonial-card p-4">
-                    <div class="stars">★★★★★</div>
-                    <p>"Aku suka banget! Bunga-bunganya segar, wangi, dan warnanya menenangkan banget. Pasti order lagi."</p>
-                    <h6 class="mt-3 mb-0">Linda Kusumawardani</h6>
-                    <small class="text-muted">Freelance Designer</small>
+                <div class="testimonial-card p-4 shadow-sm rounded-4 position-relative">
+                    <div class="d-flex flex-column align-items-center">
+                        <img src="https://i.pravatar.cc/100?u=linda" 
+                             alt="Linda Kusumawardani" 
+                             class="rounded-circle mb-3 shadow-sm" width="80" height="80">
+                        <div class="stars text-warning fs-5 mb-2">★★★★★</div>
+                        <p class="text-muted mb-3">"Aku suka banget! Bunga-bunganya segar, wangi, dan warnanya menenangkan banget. Pasti order lagi."</p>
+                        <h6 class="fw-semibold mb-0">Linda Kusumawardani</h6>
+                        <small class="text-muted">Freelance Designer</small>
+                    </div>
                 </div>
             </div>
+
             <div class="col-md-4 fade-up">
-                <div class="testimonial-card p-4">
-                    <div class="stars">★★★★★</div>
-                    <p>"Harga terjangkau, respon cepat, dan pengiriman juga aman. Super recommended!"</p>
-                    <h6 class="mt-3 mb-0">Cahyady Anjeli</h6>
-                    <small class="text-muted">Makeup Artist</small>
+                <div class="testimonial-card p-4 shadow-sm rounded-4 position-relative">
+                    <div class="d-flex flex-column align-items-center">
+                        <img src="https://i.pravatar.cc/100?u=cahyady" 
+                             alt="Cahyady Anjeli" 
+                             class="rounded-circle mb-3 shadow-sm" width="80" height="80">
+                        <div class="stars text-warning fs-5 mb-2">★★★★★</div>
+                        <p class="text-muted mb-3">"Harga terjangkau, respon cepat, dan pengiriman juga aman. Super recommended!"</p>
+                        <h6 class="fw-semibold mb-0">Cahyady Anjeli</h6>
+                        <small class="text-muted">Makeup Artist</small>
+                    </div>
                 </div>
             </div>
         </div>
@@ -210,5 +242,96 @@ document.addEventListener("DOMContentLoaded", function() {
     elements.forEach(el => observer.observe(el));
 });
 </script>
+
+<script>
+document.getElementById('searchInput').addEventListener('input', function() {
+    const query = this.value.trim();
+    const searchResults = document.getElementById('searchResults');
+    const floristBox = document.getElementById('searchFlorists');
+    const productBox = document.getElementById('searchProducts');
+
+    if (query.length === 0) {
+        searchResults.style.display = 'none';
+        floristBox.innerHTML = '';
+        productBox.innerHTML = '';
+        return;
+    }
+
+    fetch(`/user/search?q=${query}`)
+        .then(res => res.json())
+        .then(data => {
+            console.log('🔍 Data hasil pencarian:', data); 
+
+            searchResults.style.display = 'block';
+            searchResults.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            floristBox.innerHTML = '';
+            productBox.innerHTML = '';
+
+            if (data.florists && data.florists.length > 0) {
+                floristBox.innerHTML = `
+                    <h6 class="fw-semibold text-start text-secondary mt-3">Florists</h6>
+                    <div class="row g-3 mt-2" id="floristResultsRow">
+                        ${data.florists.map(florist => `
+                            <div class="col-md-4 fade-up">
+                                <a href="/florist/${florist.slug}" class="text-decoration-none text-dark">
+                                    <div class="card border-0 shadow-sm rounded-4 overflow-hidden hover-card">
+                                        <img src="/storage/${florist.image}" 
+                                            alt="${florist.name}" 
+                                            class="card-img-top" 
+                                            style="height:160px; object-fit:cover;"
+                                            onerror="this.src='/images/default-florist.jpg';">
+                                        <div class="card-body">
+                                            <h6 class="fw-semibold mb-1">${florist.name}</h6>
+                                            <p class="text-muted small mb-1">
+                                                <i class="bi bi-geo-alt text-pink me-1"></i>${florist.address ?? '-'}
+                                            </p>
+                                            <p class="small text-warning mb-0">
+                                                <i class="bi bi-star-fill me-1"></i>${florist.rating ?? 0}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            if (data.products && data.products.length > 0) {
+                productBox.innerHTML = `
+                    <h6 class="fw-semibold text-start text-secondary mt-4">Bouquets</h6>
+                    <div class="row g-3 mt-2" id="productResultsRow"></div>
+                `;
+                const productResultsRow = productBox.querySelector('#productResultsRow');
+                data.products.forEach(product => {
+                    // guard: build detail link only if florist slug and product slug available
+                    const hasDetail = product && product.florist && product.florist.slug && product.slug;
+                    const detailHtml = hasDetail
+                        ? `<a href="/florist/${product.florist.slug}/product/${product.slug}" class="btn btn-sm btn-pink rounded-pill shadow-sm"><i class="bi bi-eye me-1"></i> Lihat Detail</a>`
+                        : `<button class="btn btn-sm btn-pink rounded-pill shadow-sm" disabled><i class="bi bi-eye me-1"></i> Lihat Detail</button>`;
+
+                    productResultsRow.innerHTML += `
+                        <div class="col-md-3 fade-up">
+                            <div class="card border-0 shadow-sm rounded-4 h-100 hover-card">
+                                <img src="/storage/${product.image}" class="card-img-top rounded-top-4" style="height:180px; object-fit:cover;">
+                                <div class="card-body text-center">
+                                    <h6 class="fw-semibold mb-1">${product.name}</h6>
+                                    <p class="text-muted small mb-1">Rp ${new Intl.NumberFormat('id-ID').format(product.price)}</p>
+                                    ${detailHtml}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+        })
+        .catch(err => {
+            console.error('❌ Error saat fetch:', err);
+        });
+});
+
+</script>
+
 
 @endsection
