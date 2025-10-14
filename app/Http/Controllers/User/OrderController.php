@@ -7,9 +7,12 @@ use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Models\Products;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class OrderController extends Controller
 {
+
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -31,13 +34,10 @@ class OrderController extends Controller
         $product = Products::findOrFail($request->product_id);
 
         $productPrice = $product->price * $request->quantity;
-
         $paperBagFee = (strtolower($request->paper_bag) === 'yes' || $request->paper_bag === 'Paper Bag')
             ? 10000 * $request->quantity
             : 0;
-
         $deliveryFee = (strtolower($request->pickup_method) === 'pick up') ? 0 : 26000;
-
         $adminFee = 9500;
 
         $total = $productPrice + $paperBagFee + $deliveryFee + $adminFee;
@@ -45,6 +45,7 @@ class OrderController extends Controller
         $slug = Str::slug($product->name . '-' . Str::random(5));
 
         $order = Order::create([
+            'user_id' => Auth::id(), 
             'product_id' => $product->id,
             'customer_name' => $request->customer_name,
             'customer_phone' => $request->customer_phone,
@@ -58,7 +59,7 @@ class OrderController extends Controller
             'additional_request' => $request->additional_request,
             'address' => $request->address,
             'payment_method' => $request->payment_method,
-            'total_price' => $total, 
+            'total_price' => $total,
             'status' => 'Pending',
             'slug' => $slug,
         ]);
@@ -74,7 +75,6 @@ class OrderController extends Controller
     public function cancel(Order $order)
     {
         $product = $order->product;
-
         $floristSlug = $product->florist->slug ?? null;
         $productSlug = $product->slug ?? null;
 
@@ -88,7 +88,7 @@ class OrderController extends Controller
         }
 
         return redirect()->route('dashboard_user')
-                        ->with('success', 'Pesanan telah dibatalkan 💔');
+            ->with('success', 'Pesanan telah dibatalkan 💔');
     }
 
     public function showPayment($slug)
@@ -107,18 +107,93 @@ class OrderController extends Controller
             'payment_proof' => 'required|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        $proofPath = $request->file('payment_proof')->store('order/payment', 'public');
+        $proofPath = $request->file('payment_proof')->store('order/payment','public');
+
+        $now = Carbon::now('Asia/Jakarta');
 
         $order->update([
             'payment_method' => $validated['payment_method'],
-            'sender_name' => $validated['sender_name'], 
+            'sender_name' => $validated['sender_name'],
             'payment_proof' => $proofPath,
-            'payment_status' => 'Paid', 
+            'payment_status' => 'Paid',
             'status' => 'Confirmed',
+            'paid_at' => $now,
         ]);
 
-        return redirect()->route('dashboard_user')
-            ->with('success', 'Bukti pembayaran berhasil dikirim 💖');
+        $order->update([
+            'prepared_at' => $now->copy()->addMinutes(2),
+            'status' => 'Processing',
+        ]);
+
+        return redirect()->route('order.tracking', $order->slug)
+            ->with('success','Bukti pembayaran berhasil dikirim 💖');
+    }
+
+    public function tracking($slug)
+    {
+        $order = Order::where('slug', $slug)->firstOrFail();
+        return view('user.orders.tracking', compact('order'));
+    }
+
+    public function cart()
+    {
+        return view('user.orders.cart');
+    }
+
+    public function history()
+    {
+        $orders = Order::where('user_id', Auth::id())
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('user.orders.history', compact('orders'));
+    }
+
+    public function markShipped(Order $order)
+    {
+        $order->update([
+            'status' => 'Out for Delivery',
+            'shipped_at' => now()->timezone('Asia/Jakarta'),
+        ]);
+    }
+
+    public function markDelivered(Order $order)
+    {
+        $order->update([
+            'status' => 'Delivered',
+            'delivered_at' => now()->timezone('Asia/Jakarta'),
+            'payment_status' => 'Paid',
+        ]);
+    }
+
+    public function updateStatus(Request $request, $id)
+    {
+        $order = Order::findOrFail($id);
+        $newStatus = $request->status;
+
+        $order->status = $newStatus;
+
+        switch ($newStatus) {
+            case 'Confirmed':
+                $order->paid_at = now();
+                break;
+            case 'Processing':
+                $order->prepared_at = now();
+                break;
+            case 'Ready to Ship':
+                $order->ready_at = now();
+                break;
+            case 'Out for Delivery':
+                $order->shipped_at = now();
+                break;
+            case 'Delivered':
+                $order->delivered_at = now();
+                break;
+        }
+
+        $order->save();
+
+        return back()->with('success', 'Status pesanan berhasil diperbarui.');
     }
 
 }

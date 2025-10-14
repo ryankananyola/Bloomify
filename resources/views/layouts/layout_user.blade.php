@@ -12,6 +12,49 @@
 
     <link rel="stylesheet" href="{{ asset('css/dashboard_user.css') }}">
     <link rel="stylesheet" href="{{ asset('css/footer.css') }}">
+    <style>
+        .navbar .nav-link {
+            color: #444;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .navbar .nav-link:hover {
+            color: #e64b7d;
+        }
+
+        .navbar .nav-link.active {
+            color: #e64b7d;
+            font-weight: 600;
+        }
+
+        .navbar .nav-link.active::after {
+            content: "";
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: #e64b7d;
+            border-radius: 2px;
+        }
+
+        .navbar .nav-link::after {
+            content: "";
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0%;
+            height: 2px;
+            background-color: #e64b7d;
+            transition: width 0.3s ease;
+        }
+
+        .navbar .nav-link:hover::after {
+            width: 100%;
+        }
+    </style>
 </head>
 <body>
 
@@ -24,8 +67,19 @@
             <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                 <ul class="navbar-nav align-items-center gap-3">
                     <li class="nav-item">
-                        <a href="#" class="nav-link"><i class="bi bi-cart3 me-1"></i> Cart</a>
+                        <a href="{{ route('cart') }}"
+                        class="nav-link {{ request()->routeIs('cart') ? 'active' : '' }}">
+                            <i class="bi bi-cart3 me-1"></i> Cart
+                        </a>
                     </li>
+
+                    <li class="nav-item">
+                        <a href="{{ route('order.history') }}"
+                        class="nav-link {{ request()->routeIs('order.history') ? 'active' : '' }}">
+                            <i class="bi bi-bag-heart me-1"></i> Pesanan
+                        </a>
+                    </li>
+
                     <li class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle d-flex align-items-center" data-bs-toggle="dropdown">
                             <i class="bi bi-person-circle me-1"></i> {{ Auth::user()->full_name ?? 'User' }}

@@ -58,6 +58,11 @@ Route::get('/payment/{slug}', [OrderController::class, 'showPayment'])
     ->name('payment.show');
 Route::post('/payment/{slug}/submit', [OrderController::class, 'submitPayment'])
     ->name('payment.submit');
+Route::get('/cart', [OrderController::class, 'cart'])->name('cart');
+Route::get('/orders/history', [OrderController::class, 'history'])->name('order.history');
+Route::get('/orders/history/tracking/{slug}', [OrderController::class, 'tracking'])
+    ->name('order.tracking')
+    ->middleware('auth');
 
 
 
