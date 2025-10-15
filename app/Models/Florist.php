@@ -71,4 +71,10 @@ class Florist extends Model
     {
         return $this->hasMany(\App\Models\Testimonial::class, 'florist_id');
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
 }

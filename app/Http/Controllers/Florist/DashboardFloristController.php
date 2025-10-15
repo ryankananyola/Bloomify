@@ -11,15 +11,32 @@ class DashboardFloristController extends Controller
 {
     public function index()
     {
-        $florist = Auth::user()->florist;
-        $floristId = $florist->id ?? null;
+        $user = Auth::user();
 
-        $orders = Order::where('florist_id', $floristId)->latest()->take(5)->get();
+        if (!$user || !$user->florist) {
+            return redirect()->route('login')->withErrors('Anda tidak memiliki akses ke dashboard florist.');
+        }
+
+        $floristId = $user->florist->id;
+
+        $orders = Order::where('florist_id', $floristId)
+            ->latest()
+            ->take(5)
+            ->get();
+
         $products = Products::where('florists_id', $floristId)->count();
-        $revenue = Order::where('florist_id', $floristId)
-                        ->where('payment_status', 'Paid')
-                        ->sum('total_price');
 
-        return view('florist.dashboard', compact('orders', 'products', 'revenue'));
+        $revenue = Order::where('florist_id', $floristId)
+            ->where('payment_status', 'Paid')
+            ->sum('total_price');
+
+        $stats = [
+            'orders' => $orders,
+            'products' => $products,
+            'revenue' => $revenue,
+        ];
+
+        return view('florist.dashboard', compact('stats'));
     }
+
 }

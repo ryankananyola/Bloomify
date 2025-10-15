@@ -7,14 +7,14 @@ use Illuminate\Http\Request;
 use App\Models\Products;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Storage;
 
 class ProductFloristController extends Controller
 {
     public function index()
     {
-        $floristId = Auth::user()->florist->id;
-        $products = Products::where('florists_id', $floristId)->paginate(10);
+        $florist = Auth::user()->florist;
+        $products = Products::where('florists_id', $florist->id)->latest()->get();
+
         return view('florist.products.index', compact('products'));
     }
 
@@ -25,70 +25,90 @@ class ProductFloristController extends Controller
 
     public function store(Request $request)
     {
-        $floristId = Auth::user()->florist->id;
+        $florist = Auth::user()->florist;
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'price' => 'required|numeric',
-            'image' => 'nullable|image|max:4096',
+            'description' => 'nullable|string',
+            'price' => 'required|numeric|min:1000',
+            'flowers' => 'nullable|array',
+            'flowers.*' => 'nullable|string|max:100',
+            'image' => 'nullable|image|max:2048',
         ]);
 
-        $path = $request->file('image')?->store('products', 'public');
+        try {
+            $imagePath = $request->hasFile('image')
+                ? $request->file('image')->store('products', 'public')
+                : null;
 
-        Products::create([
-            'florists_id' => $floristId,
-            'name' => $validated['name'],
-            'price' => $validated['price'],
-            'image' => $path,
-            'slug' => Str::slug($validated['name'].'-'.Str::random(5)),
-        ]);
+            Products::create([
+                'florists_id' => $florist->id,
+                'name' => $validated['name'],
+                'description' => $validated['description'] ?? '',
+                'price' => $validated['price'],
+                'flowers' => array_values(array_filter($validated['flowers'] ?? [])),
+                'image' => $imagePath,
+            ]);
 
-        return redirect()->route('florist.products.index')->with('success', 'Produk berhasil ditambahkan.');
+            return redirect()
+                ->route('florist.products.index')
+                ->with('success', '✅ Produk berhasil ditambahkan!');
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', '❌ Gagal menambahkan produk: ' . $e->getMessage());
+        }
     }
 
     public function edit(Products $product)
     {
-        if ($product->florists_id !== Auth::user()->florist->id) {
-            abort(403);
-        }
-        return view('florist.products.edit', compact('product'));
+        return view('florist.products.update', compact('product'));
     }
 
     public function update(Request $request, Products $product)
     {
-        if ($product->florists_id !== Auth::user()->florist->id) {
-            abort(403);
-        }
-
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'price' => 'required|numeric',
-            'image' => 'nullable|image|max:4096',
+            'description' => 'nullable|string',
+            'price' => 'required|numeric|min:1000',
+            'flowers' => 'nullable|array',
+            'flowers.*' => 'nullable|string|max:100',
+            'image' => 'nullable|image|max:2048',
         ]);
 
-        if ($request->hasFile('image')) {
-            if ($product->image) Storage::disk('public')->delete($product->image);
-            $path = $request->file('image')->store('products', 'public');
-            $product->image = $path;
+        try {
+            if ($request->hasFile('image')) {
+                $product->image = $request->file('image')->store('products', 'public');
+            }
+
+            $product->update([
+                'name' => $validated['name'],
+                'description' => $validated['description'] ?? '',
+                'price' => $validated['price'],
+                'flowers' => array_values(array_filter($validated['flowers'] ?? [])),
+            ]);
+
+            return redirect()
+                ->route('florist.products.index')
+                ->with('success', '✅ Produk berhasil diperbarui!');
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', '❌ Gagal memperbarui produk: ' . $e->getMessage());
         }
-
-        $product->update([
-            'name' => $validated['name'],
-            'price' => $validated['price'],
-        ]);
-
-        return redirect()->route('florist.products.index')->with('success', 'Produk berhasil diperbarui.');
     }
 
     public function destroy(Products $product)
     {
-        if ($product->florists_id !== Auth::user()->florist->id) {
-            abort(403);
-        }
-
-        if ($product->image) Storage::disk('public')->delete($product->image);
         $product->delete();
-
         return back()->with('success', 'Produk berhasil dihapus.');
     }
+
+    public function show(Products $product)
+    {
+        return view('florist.products.show', compact('product'));
+    }
+
 }

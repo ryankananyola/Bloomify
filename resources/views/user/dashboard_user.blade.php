@@ -304,7 +304,6 @@ document.getElementById('searchInput').addEventListener('input', function() {
                 `;
                 const productResultsRow = productBox.querySelector('#productResultsRow');
                 data.products.forEach(product => {
-                    // guard: build detail link only if florist slug and product slug available
                     const hasDetail = product && product.florist && product.florist.slug && product.slug;
                     const detailHtml = hasDetail
                         ? `<a href="/florist/${product.florist.slug}/product/${product.slug}" class="btn btn-sm btn-pink rounded-pill shadow-sm"><i class="bi bi-eye me-1"></i> Lihat Detail</a>`

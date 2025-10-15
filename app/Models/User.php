@@ -35,8 +35,9 @@ class User extends Authenticatable
 
     public function florist()
     {
-        return $this->belongsTo(Florist::class);
+        return $this->belongsTo(Florist::class, 'florists_id');
     }
+
 
     public function testimonials()
     {

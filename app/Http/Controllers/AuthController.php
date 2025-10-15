@@ -93,7 +93,7 @@ class AuthController extends Controller
 
         Auth::login($user);
 
-        return redirect()->route('login.form')->with('success', 'Registrasi berhasil! Silakan login.');
+        return redirect()->route('login')->with('success', 'Registrasi berhasil! Silakan login.');
     }
 
     public function loginWeb(Request $request)
@@ -107,6 +107,8 @@ class AuthController extends Controller
             $request->session()->regenerate();
 
             $user = Auth::user();
+
+            // dd($user->role, $user->florist);
 
             if ($user->role === 'florist') {
                 return redirect()->route('florist.dashboard')->with('success', 'Selamat datang di portal Florist!');
@@ -124,6 +126,6 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('login.form')->with('success', 'Logout berhasil!');
+        return redirect()->route('login')->with('success', 'Logout berhasil!');
     }
 }

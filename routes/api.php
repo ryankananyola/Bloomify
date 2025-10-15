@@ -18,10 +18,8 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 });
 
-Route::middleware(['auth:sanctum', 'florist'])->get('/florist/stats', function () {
-    $florist = Auth::user()->florist;
-    $floristId = $florist->id ?? null;
-
+Route::get('/florist/stats', function () {
+    $floristId = 1; // sementara aja buat uji
     return [
         'orders' => \App\Models\Order::where('florist_id', $floristId)->latest()->take(5)->get(),
         'products' => \App\Models\Products::where('florists_id', $floristId)->count(),
@@ -30,3 +28,4 @@ Route::middleware(['auth:sanctum', 'florist'])->get('/florist/stats', function (
                         ->sum('total_price'),
     ];
 });
+
