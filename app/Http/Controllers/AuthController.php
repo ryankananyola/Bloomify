@@ -97,19 +97,26 @@ class AuthController extends Controller
     }
 
     public function loginWeb(Request $request)
-{
-    $credentials = $request->validate([
-        'phone' => 'required|string',
-        'password' => 'required|string',
-    ]);
+    {
+        $credentials = $request->validate([
+            'phone' => 'required|string',
+            'password' => 'required|string',
+        ]);
 
-    if (Auth::attempt(['phone_number' => $credentials['phone'], 'password' => $credentials['password']])) {
-        $request->session()->regenerate();
-        return redirect()->route('dashboard_user')->with('success', 'Login berhasil!');
+        if (Auth::attempt(['phone_number' => $credentials['phone'], 'password' => $credentials['password']])) {
+            $request->session()->regenerate();
+
+            $user = Auth::user();
+
+            if ($user->role === 'florist') {
+                return redirect()->route('florist.dashboard')->with('success', 'Selamat datang di portal Florist!');
+            }
+
+            return redirect()->route('dashboard_user')->with('success', 'Login berhasil!');
+        }
+
+        return back()->withErrors(['phone' => 'Nomor HP atau password salah.'])->onlyInput('phone');
     }
-
-    return back()->withErrors(['phone' => 'Nomor HP atau password salah.'])->onlyInput('phone');
-}
 
     public function logoutWeb(Request $request)
     {

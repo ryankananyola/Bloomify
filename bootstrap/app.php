@@ -48,6 +48,10 @@ return Application::configure(basePath: dirname(__DIR__))
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ]);
 
+        $middleware->alias([
+            'florist' => \App\Http\Middleware\FloristMiddleware::class,
+        ]);
+
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         // 🔹 Tempat konfigurasi error handler global (biarkan kosong dulu)

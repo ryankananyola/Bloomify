@@ -2,11 +2,16 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+
 use App\Http\Controllers\User\DashboardUserController;
 use App\Http\Controllers\User\FloristController;
 use App\Http\Controllers\User\TestimonialController;
 use App\Http\Controllers\User\ProductController;
 use App\Http\Controllers\User\OrderController;
+
+use App\Http\Controllers\Florist\DashboardFloristController;
+use App\Http\Controllers\Florist\ProductFloristController;
+use App\Http\Controllers\Florist\OrderFloristController;
 
 // Landing Page
 Route::get('/', function () {
@@ -63,6 +68,15 @@ Route::get('/orders/history', [OrderController::class, 'history'])->name('order.
 Route::get('/orders/history/tracking/{slug}', [OrderController::class, 'tracking'])
     ->name('order.tracking')
     ->middleware('auth');
+
+// FLORIST
+Route::middleware(['auth', 'florist'])
+    ->prefix('florist')
+    ->name('florist.')
+    ->group(function () {
+        Route::get('/dashboard', [\App\Http\Controllers\Florist\DashboardFloristController::class, 'index'])
+            ->name('dashboard');
+    });
 
 
 
