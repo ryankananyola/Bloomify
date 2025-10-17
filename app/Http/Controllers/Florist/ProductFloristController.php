@@ -91,7 +91,7 @@ class ProductFloristController extends Controller
 
             return redirect()
                 ->route('florist.products.index')
-                ->with('success', '✅ Produk berhasil diperbarui!');
+                ->with('success', ' Produk berhasil diperbarui!');
         } catch (\Exception $e) {
             return redirect()
                 ->back()
@@ -102,8 +102,16 @@ class ProductFloristController extends Controller
 
     public function destroy(Products $product)
     {
-        $product->delete();
-        return back()->with('success', 'Produk berhasil dihapus.');
+        try {
+            $product->delete();
+            return redirect()
+                ->route('florist.products.index')
+                ->with('success', '🗑️ Produk berhasil dihapus.');
+        } catch (\Exception $e) {
+            return redirect()
+                ->route('florist.products.index')
+                ->with('error', '❌ Gagal menghapus produk: ' . $e->getMessage());
+        }
     }
 
     public function show(Products $product)

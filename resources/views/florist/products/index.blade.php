@@ -1,113 +1,98 @@
 @extends('layouts.florist')
 
 @section('content')
-<div class="container py-4 animate__animated animate__fadeIn">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold text-pink-600">🌸 Produk Saya</h2>
-        <a href="{{ route('florist.products.create') }}" class="btn btn-pink shadow-sm px-4 py-2 rounded-pill">
-            <i class="bi bi-plus-circle me-1"></i> Tambah Produk
+<div class="container py-5 animate__animated animate__fadeIn">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <h2 class="fw-bold text-pink-600 mb-0">🌸 Katalog Saya</h2>
+        <a href="{{ route('florist.products.create') }}" class="btn btn-gradient shadow-sm px-4 py-2 rounded-pill fw-semibold">
+            <i class="bi bi-plus-circle me-2"></i>Tambah Produk
         </a>
     </div>
 
     @if(session('success'))
         <div class="alert alert-success shadow-sm rounded-3 mb-4 animate__animated animate__fadeInDown">
-            {{ session('success') }}
+            <i class="bi bi-check-circle-fill me-2"></i>{{ session('success') }}
         </div>
     @endif
 
-    <div class="row g-4">
-        @forelse($products as $product)
-            <div class="col-md-4 animate__animated animate__fadeInUp animate__delay-1s">
-                <div class="card border-0 shadow-lg rounded-4 overflow-hidden product-card h-100">
-                    <div class="position-relative overflow-hidden">
-                        <img 
-                            src="{{ $product->image ? asset('storage/'.$product->image) : 'https://placehold.co/600x400?text=No+Image' }}" 
-                            class="card-img-top" 
-                            style="height:220px; object-fit:cover; transition:transform 0.5s ease;"
-                        >
-                        <div class="card-img-overlay d-flex justify-content-end align-items-start p-3">
-                            <span class="badge bg-light text-dark shadow-sm">#{{ $loop->iteration }}</span>
+    @if($products->count())
+        <div class="row g-4">
+            @foreach($products as $product)
+            <div class="col-md-4">
+                <a href="{{ route('florist.products.show', $product->slug) }}" 
+                   class="text-decoration-none text-dark">
+                    <div class="card product-card border-0 shadow-lg rounded-4 overflow-hidden position-relative">
+                        <div class="image-wrapper position-relative">
+                            <img src="{{ $product->image ? asset('storage/'.$product->image) : 'https://placehold.co/600x400?text=No+Image' }}"
+                                 alt="{{ $product->name }}"
+                                 class="card-img-top img-fluid">
+                        </div>
+
+                        <div class="card-body text-center p-4">
+                            <h5 class="fw-bold text-pink-600 mb-2">{{ $product->name }}</h5>
+                            <p class="text-muted small mb-3">{{ Str::limit($product->description, 70) }}</p>
+                            <div class="fw-semibold text-pink-600 fs-5 mb-0">
+                                Rp {{ number_format($product->price, 0, ',', '.') }}
+                            </div>
                         </div>
                     </div>
-
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="fw-bold text-pink-600">{{ $product->name }}</h5>
-                        <p class="text-muted small flex-grow-1">{{ Str::limit($product->description, 80) }}</p>
-                        <p class="fw-semibold text-pink-600 fs-5 mb-3">Rp {{ number_format($product->price, 0, ',', '.') }}</p>
-
-                        <div class="d-flex justify-content-between">
-                            <a href="{{ route('florist.products.show', $product->slug) }}" 
-                                class="btn btn-outline-pink btn-sm rounded-pill px-3 shadow-sm">
-                                <i class="bi bi-eye"></i> Detail
-                            </a>
-
-                            <a href="{{ route('florist.products.edit', $product->slug) }}" 
-                                class="btn btn-outline-pink btn-sm rounded-pill px-3 shadow-sm">
-                                <i class="bi bi-pencil"></i> Edit
-                            </a>
-                            <form action="{{ route('florist.products.destroy', $product->slug) }}" 
-                                  method="POST" 
-                                  onsubmit="return confirm('Hapus produk ini?')" 
-                                  class="d-inline">
-                                @csrf
-                                @method('DELETE')
-                                <button class="btn btn-outline-danger btn-sm rounded-pill px-3 shadow-sm">
-                                    <i class="bi bi-trash"></i> Hapus
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
+                </a>
             </div>
-        @empty
-            <div class="text-center mt-5 animate__animated animate__fadeIn">
-                <img src="https://cdn-icons-png.flaticon.com/512/758/758651.png" width="100" class="mb-3 opacity-75">
-                <p class="text-muted">Belum ada produk. Yuk, tambahkan produk pertamamu 🌸</p>
-            </div>
-        @endforelse
-    </div>
+            @endforeach
+        </div>
+    @else
+        <div class="text-center mt-5 animate__animated animate__fadeIn">
+            <img src="https://cdn-icons-png.flaticon.com/512/758/758651.png" width="110" class="mb-4 opacity-75">
+            <h5 class="fw-semibold text-muted">Belum ada produk 🌷</h5>
+            <p class="text-secondary small">Yuk, tambahkan produk pertamamu agar toko kamu makin cantik!</p>
+        </div>
+    @endif
 </div>
 
 <style>
+    /* Warna tema utama */
     .text-pink-600 {
         color: #e64b7d !important;
     }
 
-    .btn-pink {
-        background-color: #e64b7d;
+    /* Tombol gradien lembut */
+    .btn-gradient {
+        background: linear-gradient(135deg, #ff85b3, #e64b7d);
         color: white;
         transition: all 0.3s ease;
     }
 
-    .btn-pink:hover {
-        background-color: #d83b6e;
+    .btn-gradient:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 12px rgba(230, 75, 125, 0.3);
+        box-shadow: 0 8px 16px rgba(230, 75, 125, 0.3);
     }
 
-    .btn-outline-pink {
-        color: #e64b7d;
-        border-color: #e64b7d;
-        transition: all 0.3s ease;
-    }
-
-    .btn-outline-pink:hover {
-        background-color: #e64b7d;
-        color: #fff;
-        box-shadow: 0 4px 8px rgba(230, 75, 125, 0.25);
-    }
-
+    /* Kartu produk */
     .product-card {
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        transition: transform 0.4s ease, box-shadow 0.4s ease;
+        background-color: #fffafc;
+        cursor: pointer;
     }
 
     .product-card:hover {
-        transform: translateY(-6px);
-        box-shadow: 0 10px 20px rgba(230, 75, 125, 0.25);
+        transform: translateY(-8px);
+        box-shadow: 0 12px 24px rgba(230, 75, 125, 0.25);
+    }
+
+    /* Gambar produk */
+    .image-wrapper {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .image-wrapper img {
+        height: 220px;
+        object-fit: cover;
+        transition: transform 0.6s ease;
     }
 
     .product-card:hover img {
-        transform: scale(1.05);
+        transform: scale(1.08);
     }
 </style>
 

@@ -7,12 +7,16 @@ use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvi
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
+use Carbon\Carbon;
 
 class RouteServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {
         $this->configureRateLimiting();
+
+        Carbon::setLocale('id');
+        setlocale(LC_TIME, 'id_ID.UTF-8');
 
         $this->routes(function () {
             Route::middleware('api')

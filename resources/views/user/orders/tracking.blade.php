@@ -76,7 +76,21 @@
                     </tr>
                     <tr>
                         <td class="fw-semibold">Tanggal Pesanan</td>
-                        <td>: {{ $order->created_at->timezone('Asia/Jakarta')->translatedFormat('l, d F Y') }}</td>
+                        <td>:
+                            {{ $order->created_at->timezone('Asia/Jakarta')->translatedFormat('l, d F Y') }},
+                            {{ $order->created_at->timezone('Asia/Jakarta')->format('H:i') }} WIB
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="fw-semibold">Tanggal Diambil / Diantar</td>
+                        <td>:
+                            @if($order->pickup_date && $order->pickup_time)
+                                {{ Carbon::parse($order->pickup_date)->timezone('Asia/Jakarta')->translatedFormat('l, d F Y') }},
+                                {{ Carbon::parse($order->pickup_time)->timezone('Asia/Jakarta')->format('H:i') }} WIB
+                            @else
+                                -
+                            @endif
+                        </td>
                     </tr>
                     <tr>
                         <td class="fw-semibold">Nama Bunga</td>
@@ -120,10 +134,10 @@
                 $logs = [
                     ['time' => $order->created_at, 'text' => 'Pesanan dibuat oleh pengguna'],
                     ['time' => $order->paid_at, 'text' => 'Pembayaran diterima', 'show' => $order->payment_status === 'Paid'],
-                    ['time' => $order->prepared_at, 'text' => 'Bunga sedang dibuat', 'show' => in_array($order->status, ['Processing','Ready to Ship','Out for Delivery','Delivered','Completed'])],
-                    ['time' => $order->ready_at, 'text' => 'Bunga siap dikirim', 'show' => in_array($order->status, ['Ready to Ship','Out for Delivery','Delivered','Completed'])],
-                    ['time' => $order->shipped_at, 'text' => 'Pesanan dikirim ke alamat tujuan', 'show' => in_array($order->status, ['Out for Delivery','Delivered','Completed'])],
-                    ['time' => $order->delivered_at, 'text' => 'Pesanan selesai diterima pelanggan', 'show' => $order->status === 'Completed'],
+                    ['time' => $order->prepared_at, 'text' => 'Bunga sedang dibuat', 'show' => in_array($order->status, ['Processing','Ready to Ship','Out for Delivery','Delivered'])],
+                    ['time' => $order->ready_at, 'text' => 'Bunga siap dikirim', 'show' => in_array($order->status, ['Ready to Ship','Out for Delivery','Delivered'])],
+                    ['time' => $order->shipped_at, 'text' => 'Pesanan dikirim ke alamat tujuan', 'show' => in_array($order->status, ['Out for Delivery','Delivered'])],
+                    ['time' => $order->delivered_at, 'text' => 'Pesanan selesai diterima pelanggan', 'show' => $order->status === 'Delivered'],
                 ];
             @endphp
 
@@ -148,18 +162,18 @@
             @endforeach
         </div>
 
-        <p class="fw-semibold mt-4 mb-2">
+        {{-- <p class="fw-semibold mt-4 mb-2">
             Perkiraan Tiba:
             <span style="color:#e64b7d;">
                 Hari Ini, {{ now()->timezone('Asia/Jakarta')->translatedFormat('d F Y') }}
                 Pukul {{ now()->addMinutes(30)->timezone('Asia/Jakarta')->format('H.i') }} – {{ now()->addMinutes(40)->timezone('Asia/Jakarta')->format('H.i') }} WIB
             </span>
-        </p>
+        </p> --}}
 
-        <div class="d-flex justify-content-center gap-3 mt-3">
+        {{-- <div class="d-flex justify-content-center gap-3 mt-3">
             <a href="#" class="btn btn-sm text-white px-4 rounded-pill" style="background-color:#e64b7d;">Lihat Kurir di Peta</a>
             <a href="#" class="btn btn-sm btn-outline-danger px-4 rounded-pill">Hubungi Kurir</a>
-        </div>
+        </div> --}}
     </div>
 
     <div class="text-center mt-5 mb-4">

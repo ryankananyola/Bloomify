@@ -182,7 +182,7 @@
                     <thead>
                         <tr>
                             <th>ID Pesanan</th>
-                            <th>Pemesan</th>
+                            <th>Akun Pemesan</th>
                             <th>Total</th>
                             <th>Status</th>
                             <th>Tanggal</th>
@@ -195,8 +195,21 @@
                                 <td>{{ $order->user->full_name ?? '-' }}</td>
                                 <td class="fw-semibold">Rp {{ number_format($order->total_price, 0, ',', '.') }}</td>
                                 <td>
-                                    <span class="badge bg-{{ $order->payment_status == 'Paid' ? 'success' : 'secondary' }}">
-                                        {{ $order->payment_status }}
+                                    @php
+                                        $statusColor = match($order->status) {
+                                            'Pending' => 'secondary',
+                                            'Confirmed' => 'info',
+                                            'Processing' => 'primary',
+                                            'Being Prepared' => 'warning',
+                                            'Ready to Ship' => 'dark',
+                                            'Out for Delivery' => 'primary',
+                                            'Delivered' => 'success',
+                                            default => 'secondary'
+                                        };
+                                    @endphp
+
+                                    <span class="badge bg-{{ $statusColor }}">
+                                        {{ $order->status }}
                                     </span>
                                 </td>
                                 <td>{{ $order->created_at->format('d M Y') }}</td>

@@ -36,9 +36,6 @@ class OrderFloristController extends Controller
         $order->status = $request->status;
 
         switch ($request->status) {
-            case 'Being Prepared':
-                $order->prepared_at = $order->prepared_at ?? Carbon::now('Asia/Jakarta');
-                break;
             case 'Ready to Ship':
                 $order->ready_at = $order->ready_at ?? Carbon::now('Asia/Jakarta');
                 break;

@@ -10,6 +10,12 @@ use Illuminate\Support\Facades\Auth;
 
 class TestimonialController extends Controller
 {
+    public function create($florist_id)
+    {
+        $florist = Florist::findOrFail($florist_id);
+        return view('user.testimonials.create', compact('florist'));
+    }
+
     public function store(Request $request)
     {
         $request->validate([
@@ -18,15 +24,19 @@ class TestimonialController extends Controller
             'comment' => 'required|string|max:500',
         ]);
 
+        $user = Auth::user();
+
         Testimonial::create([
             'florist_id' => $request->florist_id,
-            'user_id' => Auth::id(),
+            'user_id' => $user->id,
             'rating' => $request->rating,
             'comment' => $request->comment,
         ]);
 
-        return back()->with('success', 'Terima kasih atas testimoni kamu!');
+        return redirect()->route('order.history')
+                        ->with('success', 'Terima kasih! Testimoni kamu berhasil dikirim 🌸');
     }
+
 
     public function showFloristTestimonials($florist_id)
     {

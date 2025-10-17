@@ -4,6 +4,20 @@
 
 @section('content')
 <div class="container py-5" style="max-width: 900px; margin-top: 90px;">
+    @if(session('success'))
+        <div class="alert alert-success alert-dismissible fade show rounded-4" role="alert">
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="alert alert-danger alert-dismissible fade show rounded-4" role="alert">
+            {{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
+    
     <h4 class="fw-bold mb-4 text-center" style="color:#e64b7d;">Riwayat Pesanan Anda</h4>
 
     @if($orders->isEmpty())
@@ -16,7 +30,7 @@
         @foreach($orders as $order)
         <div class="card shadow-sm border-0 rounded-4 mb-4 p-4">
             <div class="d-flex justify-content-between align-items-center flex-wrap">
-                <div class="d-flex align-items-center">
+                <div class="d-flex align-items-center mb-3 mb-sm-0">
                     <img src="{{ asset('storage/' . $order->product->image) }}" 
                         alt="{{ $order->product->name }}" 
                         class="rounded-3 me-3" 
@@ -30,20 +44,39 @@
                     </div>
                 </div>
 
-                <div class="text-end mt-3 mt-sm-0">
+                <div class="text-end">
                     <span class="badge 
-                        @if($order->payment_status == 'Paid') bg-success 
-                        @elseif($order->payment_status == 'Pending') bg-warning text-dark 
-                        @else bg-secondary 
-                        @endif">
-                        {{ ucfirst($order->payment_status ?? 'Pending') }}
+                        @switch($order->status)
+                            @case('Pending') bg-secondary @break
+                            @case('Confirmed') bg-info @break
+                            @case('Processing') bg-warning text-dark @break
+                            @case('Being Prepared') bg-primary @break
+                            @case('Ready to Ship') bg-success @break
+                            @case('Out for Delivery') bg-pink text-white @break
+                            @case('Delivered') bg-success @break
+                            @default bg-light text-dark
+                        @endswitch
+                    ">
+                        {{ ucfirst($order->status ?? 'Pending') }}
                     </span>
 
-                    <p class="small text-muted mt-2 mb-1">{{ $order->created_at->timezone('Asia/Jakarta')->format('d M Y | H:i') }}</p>
+                    <p class="small text-muted mt-2 mb-2">{{ $order->created_at->timezone('Asia/Jakarta')->format('d M Y | H:i') }}</p>
 
-                    <a href="{{ route('order.tracking', $order->slug) }}" class="btn btn-sm rounded-pill text-white" style="background-color:#e64b7d;">
-                        <i class="bi bi-truck"></i> Lihat Tracking
-                    </a>
+                    <div class="d-flex align-items-center justify-content-end gap-2 flex-wrap">
+                        <a href="{{ route('order.tracking', $order->slug) }}" 
+                            class="btn btn-sm rounded-pill text-white" 
+                            style="background-color:#e64b7d;">
+                            <i class="bi bi-truck"></i> Lihat Tracking
+                        </a>
+
+                        @if($order->status === 'Delivered')
+                            <a href="{{ route('testimonial.create', ['florist' => $order->product->florist->id, 'order' => $order->id]) }}" 
+                                class="btn btn-sm rounded-pill text-white" 
+                                style="background-color:#ff69b4;">
+                                <i class="bi bi-chat-heart"></i> Kirim Testimoni
+                            </a>
+                        @endif
+                    </div>
                 </div>
             </div>
         </div>

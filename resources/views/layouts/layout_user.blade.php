@@ -81,15 +81,23 @@
                     </li>
 
                     <li class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle d-flex align-items-center" data-bs-toggle="dropdown">
-                            <i class="bi bi-person-circle me-1"></i> {{ Auth::user()->full_name ?? 'User' }}
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle me-1"></i>
+                            {{ Auth::user()->full_name ?? 'User' }}
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="#">Profile</a></li>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li>
+                                <a class="dropdown-item d-flex align-items-center" href="#">
+                                    <i class="bi bi-person me-2"></i> Profile
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
                             <li>
                                 <form action="{{ route('logout.web') }}" method="POST">
                                     @csrf
-                                    <button type="submit" class="dropdown-item text-danger">Logout</button>
+                                    <button type="submit" class="dropdown-item d-flex align-items-center text-danger">
+                                        <i class="bi bi-box-arrow-right me-2"></i> Logout
+                                    </button>
                                 </form>
                             </li>
                         </ul>

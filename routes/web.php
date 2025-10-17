@@ -53,6 +53,8 @@ Route::middleware(['auth', 'florist'])
         Route::get('/dashboard', [DashboardFloristController::class, 'index'])->name('dashboard');
         Route::resource('products', ProductFloristController::class);
         Route::get('/orders', [OrderFloristController::class, 'index'])->name('orders');
+        Route::get('/orders/{order}', [OrderFloristController::class, 'show'])->name('orders.show');
+        Route::patch('/orders/{order}/status', [OrderFloristController::class, 'updateStatus'])->name('orders.updateStatus');
         Route::get('/profile', fn() => view('florist.profile'))->name('profile');
     });
 
@@ -97,3 +99,13 @@ Route::get('/florist/{florist_slug}/product/{product_slug}', [ProductController:
 */
 Route::get('/payment/{slug}', [OrderController::class, 'showPayment'])->name('payment.show');
 Route::post('/payment/{slug}/submit', [OrderController::class, 'submitPayment'])->name('payment.submit');
+
+
+/*|--------------------------------------------------------------------------
+| Testimonial
+|--------------------------------------------------------------------------*/
+Route::get('/testimonial/create/{florist}/{order}', [TestimonialController::class, 'create'])
+    ->name('testimonial.create');
+
+Route::post('/testimonial/store', [TestimonialController::class, 'store'])
+    ->name('testimonial.store');
