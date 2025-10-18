@@ -67,8 +67,8 @@
             <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                 <ul class="navbar-nav align-items-center gap-3">
                     <li class="nav-item">
-                        <a href="{{ route('cart') }}"
-                        class="nav-link {{ request()->routeIs('cart') ? 'active' : '' }}">
+                        <a href="{{ route('cart.index') }}"
+                        class="nav-link {{ request()->routeIs('cart.*') ? 'active' : '' }}">
                             <i class="bi bi-cart3 me-1"></i> Cart
                         </a>
                     </li>

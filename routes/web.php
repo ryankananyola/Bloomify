@@ -9,6 +9,7 @@ use App\Http\Controllers\User\FloristController;
 use App\Http\Controllers\User\TestimonialController;
 use App\Http\Controllers\User\ProductController;
 use App\Http\Controllers\User\OrderController;
+use App\Http\Controllers\User\CartController;
 
 // FLORIST Controllers
 use App\Http\Controllers\Florist\DashboardFloristController;
@@ -70,7 +71,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/order/{order:slug}', [OrderController::class, 'show'])->name('order.show');
     Route::post('/order', [OrderController::class, 'store'])->name('order.store');
     Route::delete('/order/{order:slug}/cancel', [OrderController::class, 'cancel'])->name('order.cancel');
-    Route::get('/cart', [OrderController::class, 'cart'])->name('cart');
 });
 
 /*
@@ -109,3 +109,22 @@ Route::get('/testimonial/create/{florist}/{order}', [TestimonialController::clas
 
 Route::post('/testimonial/store', [TestimonialController::class, 'store'])
     ->name('testimonial.store');
+    
+
+/*|--------------------------------------------------------------------------
+| Shopping Cart Routes
+|--------------------------------------------------------------------------*/
+Route::get('/cart', [CartController::class, 'index'])
+    ->name('cart.index');
+Route::post('/cart/add/{slug}', [CartController::class, 'add'])
+    ->name('cart.add');
+Route::post('/cart/remove/{slug}', [CartController::class, 'remove'])
+    ->name('cart.remove');
+Route::get('/checkout/{slug}', [OrderController::class, 'checkout'])
+    ->name('checkout');
+Route::get('/clear-cart', function() {
+    session()->forget('cart');
+    return 'Cart cleared!';
+});
+
+

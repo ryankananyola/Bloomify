@@ -1,6 +1,7 @@
 <section id="orderFormSection" 
-    class="order-form-section py-5" 
-    style="display:none; width:100vw; background-color:#fff7fa; border-top:3px solid #e64b7d; margin-left:calc(-50vw + 50%);">
+    class="order-form-section py-5 {{ request()->is('checkout/*') ? 'show' : '' }}" 
+    style="{{ request()->is('checkout/*') ? '' : 'display:none;' }} width:100vw; background-color:#fff7fa; border-top:3px solid #e64b7d; margin-left:calc(-50vw + 50%);">
+
 
     <div class="container-fluid px-0">
         <div class="text-center mb-5">

@@ -169,7 +169,7 @@ document.getElementById('searchInput').addEventListener('input', function () {
     const customSection = document.getElementById('customSection');
 
     if (query.length < 1) {
-        customSection.style.display = "block"; // tampil lagi
+        customSection.style.display = "block"; 
         fetch(`/florist/${floristSlug}/search?q=`)
             .then(res => res.json())
             .then(data => {

@@ -197,4 +197,10 @@ class OrderController extends Controller
         return back()->with('success', 'Status pesanan berhasil diperbarui.');
     }
 
+    public function checkout($slug)
+    {
+        $product = \App\Models\Products::where('slug', $slug)->firstOrFail();
+        return view('user.orders.checkout', compact('product'));
+    }
+
 }

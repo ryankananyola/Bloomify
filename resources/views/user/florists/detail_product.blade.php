@@ -49,11 +49,15 @@
                 </div>
             @endif
 
-            <a href="#" 
-            class="btn fw-semibold px-4 py-2 rounded-pill shadow-sm mt-3" 
-            style="border: 1.5px solid #e64b7d; color:#e64b7d;">
-                <i class="bi bi-bag-heart me-1"></i> Keranjang
-            </a>
+            <form action="{{ route('cart.add', $product->slug) }}" method="POST" class="d-inline">
+                @csrf
+                <button type="submit" 
+                    class="btn fw-semibold px-4 py-2 rounded-pill shadow-sm mt-3" 
+                    style="border: 1.5px solid #e64b7d; color:#e64b7d;">
+                    <i class="bi bi-bag-heart me-1"></i> Keranjang
+                </button>
+            </form>
+
         </div>
     </div>
 
