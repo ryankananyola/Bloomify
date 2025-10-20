@@ -31,22 +31,29 @@ class DashboardUserController extends Controller
     {
         $query = $request->get('q');
 
+        if (!$query) {
+            return response()->json([
+                'florists' => [],
+                'products' => []
+            ]);
+        }
+
         $florists = Florist::where('name', 'like', "%{$query}%")
-            ->orWhere('address', 'like', "%{$query}%")
-            ->take(5)
-            ->get(['id', 'name', 'slug', 'address', 'rating', 'image']);
+            ->select('id', 'name', 'slug', 'rating', 'image')
+            ->limit(5)
+            ->get();
 
         $products = Products::with('florist:id,name,slug')
+            ->whereHas('florist')
             ->where('name', 'like', "%{$query}%")
-            ->orWhereHas('florist', function ($q) use ($query) {
-                $q->where('name', 'like', "%{$query}%");
-            })
-            ->take(8)
-            ->get(['id', 'name', 'slug', 'price', 'image', 'florists_id']);
+            ->select('id', 'name', 'price', 'slug', 'image', 'florists_id as florist_id')
+            ->limit(5)
+            ->get();
 
         return response()->json([
             'florists' => $florists,
-            'products' => $products
+            'products' => $products,
         ]);
     }
+
 }

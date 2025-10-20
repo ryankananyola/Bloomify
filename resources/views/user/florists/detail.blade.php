@@ -181,7 +181,6 @@ document.getElementById('searchInput').addEventListener('input', function () {
         return;
     }
 
-    // Sembunyikan section custom bouquet
     customSection.style.display = "none";
 
     fetch(`/florist/${floristSlug}/search?q=${encodeURIComponent(query)}`)

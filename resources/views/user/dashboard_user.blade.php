@@ -14,6 +14,16 @@
     </div>
 </section>
 
+<div id="searchResults" class="search-results container" style="display:none;">
+    <div class="search-card shadow-sm p-4 rounded-4 bg-white">
+        <h5 class="fw-bold text-pink mb-3 d-flex align-items-center">
+            <i class="bi bi-search-heart me-2"></i> Search Results
+        </h5>
+        <div id="searchFlorists" class="mb-4"></div>
+        <div id="searchProducts"></div>
+    </div>
+</div>
+
 <div class="location-input py-5 fade-up">
     <div class="container">
         <h5>Hello, <span class="text-pink">Blomy!</span> 🌸</h5>
@@ -23,12 +33,6 @@
             <input type="text" class="form-control rounded-pill" placeholder="📍 Jl. Tirtoboyeh No.1, Babarsari, Yogyakarta">
         </div>
     </div>
-</div>
-
-<div id="searchResults" class="mt-5 container" style="display:none;">
-    <h5 class="fw-bold text-pink mb-3">Search Results 🌷</h5>
-    <div id="searchFlorists"></div>
-    <div id="searchProducts" class="mt-2"></div>
 </div>
 
 <section class="container py-5 fade-up">
@@ -244,93 +248,80 @@ document.addEventListener("DOMContentLoaded", function() {
 </script>
 
 <script>
-document.getElementById('searchInput').addEventListener('input', function() {
-    const query = this.value.trim();
-    const searchResults = document.getElementById('searchResults');
-    const floristBox = document.getElementById('searchFlorists');
-    const productBox = document.getElementById('searchProducts');
+document.addEventListener("DOMContentLoaded", () => {
+    const searchInput = document.getElementById("searchInput");
+    const searchResults = document.getElementById("searchResults");
+    const searchFlorists = document.getElementById("searchFlorists");
+    const searchProducts = document.getElementById("searchProducts");
 
-    if (query.length === 0) {
-        searchResults.style.display = 'none';
-        floristBox.innerHTML = '';
-        productBox.innerHTML = '';
-        return;
-    }
+    let timeout = null;
 
-    fetch(`/user/search?q=${query}`)
-        .then(res => res.json())
-        .then(data => {
-            console.log('🔍 Data hasil pencarian:', data); 
+    searchInput.addEventListener("input", () => {
+        clearTimeout(timeout);
+        const query = searchInput.value.trim();
 
-            searchResults.style.display = 'block';
-            searchResults.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            floristBox.innerHTML = '';
-            productBox.innerHTML = '';
+        if (query.length === 0) {
+            searchResults.style.display = "none";
+            searchFlorists.innerHTML = "";
+            searchProducts.innerHTML = "";
+            return;
+        }
 
-            if (data.florists && data.florists.length > 0) {
-                floristBox.innerHTML = `
-                    <h6 class="fw-semibold text-start text-secondary mt-3">Florists</h6>
-                    <div class="row g-3 mt-2" id="floristResultsRow">
-                        ${data.florists.map(florist => `
-                            <div class="col-md-4 fade-up">
-                                <a href="/florist/${florist.slug}" class="text-decoration-none text-dark">
-                                    <div class="card border-0 shadow-sm rounded-4 overflow-hidden hover-card">
-                                        <img src="/storage/${florist.image}" 
-                                            alt="${florist.name}" 
-                                            class="card-img-top" 
-                                            style="height:160px; object-fit:cover;"
-                                            onerror="this.src='/images/default-florist.jpg';">
-                                        <div class="card-body">
-                                            <h6 class="fw-semibold mb-1">${florist.name}</h6>
-                                            <p class="text-muted small mb-1">
-                                                <i class="bi bi-geo-alt text-pink me-1"></i>${florist.address ?? '-'}
-                                            </p>
-                                            <p class="small text-warning mb-0">
-                                                <i class="bi bi-star-fill me-1"></i>${florist.rating ?? 0}
-                                            </p>
-                                        </div>
+        timeout = setTimeout(() => {
+            fetch(`/user/search?q=${encodeURIComponent(query)}`)
+                .then(res => res.json())
+                .then(data => {
+                    searchFlorists.innerHTML = "";
+                    searchProducts.innerHTML = "";
+
+                    if (data.florists.length === 0 && data.products.length === 0) {
+                        searchFlorists.innerHTML = `<p class="text-muted text-center p-3">Tidak ada hasil ditemukan 🌸</p>`;
+                        searchResults.style.display = "block";
+                        return;
+                    }
+
+                    if (data.florists.length > 0) {
+                        searchFlorists.innerHTML = `<h6 class="fw-bold text-pink mb-3"><i class="bi bi-flower1 me-1"></i> Florists</h6>`;
+                        data.florists.forEach(f => {
+                            searchFlorists.innerHTML += `
+                                <div class="search-item">
+                                    <img src="/storage/${f.image}" alt="${f.name}">
+                                    <div>
+                                        <a href="/florist/${f.slug}">${f.name}</a><br>
+                                        <small class="text-muted">⭐ ${f.rating ?? 'Baru'}</small>
                                     </div>
-                                </a>
-                            </div>
-                        `).join('')}
-                    </div>
-                `;
-            }
-
-            if (data.products && data.products.length > 0) {
-                productBox.innerHTML = `
-                    <h6 class="fw-semibold text-start text-secondary mt-4">Bouquets</h6>
-                    <div class="row g-3 mt-2" id="productResultsRow"></div>
-                `;
-                const productResultsRow = productBox.querySelector('#productResultsRow');
-                data.products.forEach(product => {
-                    const hasDetail = product && product.florist && product.florist.slug && product.slug;
-                    const detailHtml = hasDetail
-                        ? `<a href="/florist/${product.florist.slug}/product/${product.slug}" class="btn btn-sm btn-pink rounded-pill shadow-sm"><i class="bi bi-eye me-1"></i> Lihat Detail</a>`
-                        : `<button class="btn btn-sm btn-pink rounded-pill shadow-sm" disabled><i class="bi bi-eye me-1"></i> Lihat Detail</button>`;
-
-                    productResultsRow.innerHTML += `
-                        <div class="col-md-3 fade-up">
-                            <div class="card border-0 shadow-sm rounded-4 h-100 hover-card">
-                                <img src="/storage/${product.image}" class="card-img-top rounded-top-4" style="height:180px; object-fit:cover;">
-                                <div class="card-body text-center">
-                                    <h6 class="fw-semibold mb-1">${product.name}</h6>
-                                    <p class="text-muted small mb-1">Rp ${new Intl.NumberFormat('id-ID').format(product.price)}</p>
-                                    ${detailHtml}
                                 </div>
-                            </div>
-                        </div>
-                    `;
+                            `;
+                        });
+                    }
+
+                    if (data.products.length > 0) {
+                        searchProducts.innerHTML = `<h6 class="fw-bold text-pink mb-3"><i class="bi bi-bag-heart me-1"></i> Products</h6>`;
+                        data.products.forEach(p => {
+                            const floristSlug = p.florist ? p.florist.slug : '#';
+                            const floristName = p.florist ? p.florist.name : 'Unknown Florist';
+                            searchProducts.innerHTML += `
+                                <div class="search-item">
+                                    <img src="/storage/${p.image}" alt="${p.name}">
+                                    <div>
+                                        <a href="/florist/${floristSlug}/product/${p.slug}">${p.name}</a><br>
+                                        <small class="text-muted">${floristName} · Rp${parseInt(p.price).toLocaleString('id-ID')}</small>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                    }
+
+                    searchResults.style.display = "block";
+                })
+                .catch(err => {
+                    console.error(err);
+                    searchFlorists.innerHTML = `<p class="text-danger p-3">Terjadi kesalahan saat mencari data.</p>`;
+                    searchResults.style.display = "block";
                 });
-            }
-
-        })
-        .catch(err => {
-            console.error('❌ Error saat fetch:', err);
-        });
+        }, 300); 
+    });
 });
-
 </script>
-
 
 @endsection

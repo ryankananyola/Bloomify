@@ -78,7 +78,8 @@ Route::middleware('auth')->group(function () {
 | Public Florist & Product Routes
 |--------------------------------------------------------------------------
 */
-Route::get('/user/search', [DashboardUserController::class, 'search'])->name('search');
+Route::get('/user/search', [DashboardUserController::class, 'search'])
+    ->name('user.search');
 
 Route::get('/florists-all', [FloristController::class, 'index'])->name('user.florists_all');
 Route::get('/florist/{slug}', [FloristController::class, 'show'])->name('florist.show');
