@@ -56,4 +56,25 @@ class DashboardUserController extends Controller
         ]);
     }
 
+    public function getNearbyFlorists(Request $request)
+    {
+        $lat = $request->query('lat');
+        $lon = $request->query('lon');
+
+        if (!$lat || !$lon) {
+            return response()->json(['error' => 'Lokasi tidak valid.'], 400);
+        }
+
+        $florists = Florist::select('*', DB::raw("
+            (6371 * acos(cos(radians($lat)) * cos(radians(latitude)) *
+            cos(radians(longitude) - radians($lon)) +
+            sin(radians($lat)) * sin(radians(latitude)))) AS distance
+        "))
+        ->orderBy('distance', 'asc')
+        ->take(6)
+        ->get();
+
+        return response()->json($florists);
+    }
+
 }

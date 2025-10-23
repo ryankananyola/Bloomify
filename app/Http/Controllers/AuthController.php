@@ -108,8 +108,6 @@ class AuthController extends Controller
 
             $user = Auth::user();
 
-            // dd($user->role, $user->florist);
-
             if ($user->role === 'florist') {
                 return redirect()->route('florist.dashboard')->with('success', 'Selamat datang di portal Florist!');
             }

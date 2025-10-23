@@ -225,51 +225,94 @@ body {
 }
 
 /* ======== LOCATION SECTION ======== */
-.location-input {
-    background: linear-gradient(135deg, #fff0f6 0%, #ffe5ef 100%);
-    border-top: 1px solid #ffe1ec;
-    border-bottom: 1px solid #ffe1ec;
-}
-
-.text-pink { color: #E91E63 !important; }
-.bg-pink { background-color: #e75480 !important; }
-
-.location-input .container {
-    max-width: 1100px;
-    margin: 0 auto;
-    text-align: left;
-    padding-left: 3rem;
-}
-
-.location-input h5 {
-    font-weight: 600;
-    color: #444;
-    margin-bottom: 8px;
-}
-
-.location-input p {
-    color: #777;
-    font-size: 0.95rem;
-    margin-bottom: 20px;
-}
-
 .location-search {
-    max-width: 500px;
-}
-
-.location-search input {
-    background-color: #fff;
-    border: 1px solid #ffd1e1;
-    padding: 12px 20px;
-    font-size: 0.95rem;
-    box-shadow: 0 2px 8px rgba(255, 192, 203, 0.2);
+    background: linear-gradient(90deg, #ffe6f0, #fff5fa);
+    border-radius: 50px;
+    padding: 10px 20px;
+    margin: 40px auto;
+    width: 70%;
+    box-shadow: 0 4px 20px rgba(255, 192, 203, 0.25);
     transition: all 0.3s ease;
+    position: relative;
 }
-
+.location-search input {
+    border: none;
+    background: #fff;
+    box-shadow: 0 0 8px rgba(255, 182, 193, 0.2);
+    font-size: 15px;
+    padding: 10px 18px;
+}
 .location-search input:focus {
     outline: none;
-    border-color: #ff6ba0;
-    box-shadow: 0 0 12px rgba(255, 107, 160, 0.3);
+    box-shadow: 0 0 10px rgba(255, 105, 180, 0.3);
+}
+.btn-pink {
+    background: linear-gradient(135deg, #ff7aa8, #ffb6c1);
+    border: none;
+    color: #fff;
+    font-weight: 600;
+    transition: 0.3s;
+}
+.btn-pink:hover {
+    transform: scale(1.05);
+    background: linear-gradient(135deg, #ff5f96, #ff8fb8);
+}
+
+#nearbyFlorists {
+    padding: 10px 60px;
+}
+#nearbyFlorists .card {
+    border: none;
+    transition: all 0.3s ease;
+    background: #fff9fb;
+    box-shadow: 0 6px 18px rgba(255, 182, 193, 0.25);
+}
+#nearbyFlorists .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(255, 182, 193, 0.35);
+}
+#nearbyFlorists .card-img-top {
+    height: 220px;
+    object-fit: cover;
+    transition: 0.4s ease;
+}
+#nearbyFlorists .card:hover .card-img-top {
+    transform: scale(1.03);
+    filter: brightness(1.05);
+}
+#nearbyFlorists h5 {
+    color: #ff6f91;
+    font-weight: 600;
+}
+#nearbyFlorists small.text-success {
+    color: #38a169 !important;
+    font-weight: 500;
+}
+#nearbyFlorists p.text-muted i {
+    color: #ff9bbd !important;
+}
+
+@keyframes fadeUp {
+    0% { opacity: 0; transform: translateY(30px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+.animate-card {
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards;
+}
+
+.location-search.loading::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,182,193,0.2), transparent);
+    animation: shimmer 1.5s infinite;
+    border-radius: 50px;
+}
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
 }
 
 /* ======== FLORIST CARDS ======== */

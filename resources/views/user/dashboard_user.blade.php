@@ -24,16 +24,19 @@
     </div>
 </div>
 
-<div class="location-input py-5 fade-up">
-    <div class="container">
-        <h5>Hello, <span class="text-pink">Blomy!</span> 🌸</h5>
-        <p><strong>Let’s make it easy — add your location to find flower shops near you!</strong></p>
-        <div class="location-search d-flex align-items-center gap-3">
-            <i class="bi bi-geo-alt-fill text-pink fs-4"></i>
-            <input type="text" class="form-control rounded-pill" placeholder="📍 Jl. Tirtoboyeh No.1, Babarsari, Yogyakarta">
-        </div>
-    </div>
+<div class="location-search d-flex align-items-center gap-3">
+    <i class="bi bi-geo-alt-fill text-pink fs-4"></i>
+    <input type="text" id="manualLocation" class="form-control rounded-pill" placeholder="📍 Masukkan lokasi kamu">
+    <button class="btn btn-pink rounded-pill px-3" id="detectLocation">
+        <i class="bi bi-crosshair"></i> Gunakan Lokasi Saya
+    </button>
 </div>
+
+<section class="container py-5 fade-up text-center">
+    <h2 class="fw-bold mb-4 text-pink">🌸 Florist Terdekat di Sekitarmu 🌸</h2>
+    <p class="text-muted mb-4">Temukan toko bunga yang paling dekat dengan lokasimu dan kirim keindahan hari ini 💕</p>
+    <div id="nearbyFlorists" class="row g-4 justify-content-center"></div>
+</section>
 
 <section class="container py-5 fade-up">
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -320,6 +323,157 @@ document.addEventListener("DOMContentLoaded", () => {
                     searchResults.style.display = "block";
                 });
         }, 300); 
+    });
+});
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const detectBtn = document.getElementById('detectLocation');
+    const manualInput = document.getElementById('manualLocation');
+    const container = document.getElementById('nearbyFlorists');
+    const locationBox = document.querySelector('.location-search');
+
+    // 🕒 Cek status buka/tutup
+    function getOpenStatus(florist) {
+        if (florist.is_always_closed) return "closed";
+
+        const now = new Date();
+        const [openHour, openMin] = florist.open_time.split(":").map(Number);
+        const [closeHour, closeMin] = florist.close_time.split(":").map(Number);
+
+        const open = new Date();
+        open.setHours(openHour, openMin, 0);
+
+        const close = new Date();
+        close.setHours(closeHour, closeMin, 0);
+
+        return now >= open && now <= close ? "open" : "closed";
+    }
+
+    // 🧭 Render florist cards (dengan link & status open)
+    function renderFlorists(data) {
+        container.innerHTML = '';
+
+        if (!Array.isArray(data) || data.length === 0) {
+            container.innerHTML = `<p class="text-muted">Tidak ada florist di sekitar lokasi tersebut 🌸</p>`;
+            return;
+        }
+
+        data.forEach((f, i) => {
+            const status = getOpenStatus(f);
+            const badgeColor = status === "open" ? "bg-success" : "bg-danger";
+            const badgeText = status === "open" ? "Open" : "Close";
+
+            const card = document.createElement('div');
+            card.className = 'col-md-4 animate-card';
+            card.style.animationDelay = `${i * 120}ms`;
+
+            card.innerHTML = `
+                <a href="/florist/${f.slug}" class="text-decoration-none text-dark">
+                    <div class="card shadow-sm rounded-4 overflow-hidden hover-card position-relative">
+                        <span class="badge ${badgeColor} position-absolute m-3 px-3 py-2 rounded-pill">${badgeText}</span>
+                        <img src="/storage/${f.image}" class="card-img-top florist-img" alt="${f.name}">
+                        <div class="card-body">
+                            <h5 class="fw-semibold mb-1 florist-name">${f.name}</h5>
+                            <p class="text-muted small mb-1 d-flex align-items-center">
+                                <i class="bi bi-geo-alt me-1 text-pink"></i> ${f.address}
+                            </p>
+                            <div class="d-flex align-items-center justify-content-between mb-1">
+                                <small class="text-muted d-flex align-items-center">
+                                    <i class="bi bi-tag me-1 text-pink"></i>
+                                    Start From Rp${parseInt(f.start_price).toLocaleString('id-ID')}
+                                </small>
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-star-fill text-warning me-1"></i>
+                                    <small class="fw-semibold text-success">${parseFloat(f.rating ?? 0).toFixed(1)}</small>
+                                </div>
+                            </div>
+                            <small class="text-muted d-block">
+                                <i class="bi bi-clock me-1 text-pink"></i>
+                                Open ${f.open_time_formatted ?? f.open_time} - Close ${f.close_time_formatted ?? f.close_time}
+                            </small>
+                            <small class="text-success d-block mt-1">📍 ${f.distance ? f.distance.toFixed(2) : '?'} km dari kamu</small>
+                        </div>
+                    </div>
+                </a>
+            `;
+
+            container.appendChild(card);
+        });
+    }
+
+    // 🔍 Ambil florist dari API berdasarkan koordinat
+    async function fetchFlorists(lat, lon) {
+        try {
+            const res = await fetch(`/user/nearby-florists?lat=${lat}&lon=${lon}`);
+            const data = await res.json();
+            renderFlorists(data);
+        } catch (error) {
+            console.error(error);
+            container.innerHTML = `<p class="text-danger">Gagal memuat data florist 😢</p>`;
+        }
+    }
+
+    // 📍 Lokasi otomatis (Geolocation)
+    detectBtn.addEventListener('click', () => {
+        locationBox.classList.add('loading');
+        container.innerHTML = `<p class="text-muted">⏳ Mencari lokasi kamu...</p>`;
+
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(async pos => {
+                const lat = pos.coords.latitude;
+                const lon = pos.coords.longitude;
+
+                try {
+                    const geoRes = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`);
+                    const geoData = await geoRes.json();
+                    manualInput.value = geoData.display_name || 'Lokasi tidak diketahui';
+                    await fetchFlorists(lat, lon);
+                } catch {
+                    container.innerHTML = `<p class="text-danger">Gagal mendapatkan lokasi detail 😢</p>`;
+                }
+
+                locationBox.classList.remove('loading');
+            }, () => {
+                alert('Izin lokasi ditolak.');
+                locationBox.classList.remove('loading');
+            });
+        } else {
+            alert('Browser kamu tidak mendukung geolokasi.');
+            locationBox.classList.remove('loading');
+        }
+    });
+
+    // 🧍‍♀️ Input lokasi manual (tekan Enter)
+    manualInput.addEventListener('keypress', async (e) => {
+        if (e.key === 'Enter') {
+            const query = manualInput.value.trim();
+            if (!query) return;
+
+            locationBox.classList.add('loading');
+            container.innerHTML = `<p class="text-muted">🔍 Mencari florist di sekitar "${query}"...</p>`;
+
+            try {
+                const geoRes = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`);
+                const geoData = await geoRes.json();
+
+                if (geoData.length === 0) {
+                    container.innerHTML = `<p class="text-muted">Lokasi tidak ditemukan 😢</p>`;
+                    locationBox.classList.remove('loading');
+                    return;
+                }
+
+                const lat = geoData[0].lat;
+                const lon = geoData[0].lon;
+                await fetchFlorists(lat, lon);
+            } catch (err) {
+                console.error(err);
+                container.innerHTML = `<p class="text-danger">Terjadi kesalahan saat mencari lokasi 😢</p>`;
+            }
+
+            locationBox.classList.remove('loading');
+        }
     });
 });
 </script>

@@ -3,6 +3,9 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 
+// LANDING Controller
+use App\Http\Controllers\LandingController;
+
 // USER Controllers
 use App\Http\Controllers\User\DashboardUserController;
 use App\Http\Controllers\User\FloristController;
@@ -21,9 +24,8 @@ use App\Http\Controllers\Florist\OrderFloristController;
 | Landing Page
 |--------------------------------------------------------------------------
 */
-Route::get('/', function () {
-    return view('landing');
-})->name('landing');
+Route::get('/', [LandingController::class, 'index'])->name('landing');
+Route::get('/landing/nearby-florists', [LandingController::class, 'nearbyFlorists']);
 
 /*
 |--------------------------------------------------------------------------
@@ -66,6 +68,7 @@ Route::middleware(['auth', 'florist'])
 */
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard_user', [DashboardUserController::class, 'index'])->name('dashboard_user');
+    Route::get('/user/nearby-florists', [DashboardUserController::class, 'getNearbyFlorists'])->name('user.nearby_florists');
     Route::get('/orders/history', [OrderController::class, 'history'])->name('order.history');
     Route::get('/orders/history/tracking/{slug}', [OrderController::class, 'tracking'])->name('order.tracking');
     Route::get('/order/{order:slug}', [OrderController::class, 'show'])->name('order.show');

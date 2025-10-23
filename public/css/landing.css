@@ -100,31 +100,50 @@ nav a i {
 .location-select {
     display: flex;
     align-items: center;
-    background: rgba(255, 255, 255, 0.9);
-    border-radius: 25px;
-    padding: 8px 16px;
-    width: fit-content;
-    margin: 0 auto 20px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    justify-content: space-between;
+    background: #fff;
+    border-radius: 50px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    padding: 8px 15px;
+    max-width: 480px;
+    margin: 0 auto;
+    position: relative;
 }
 
-.location-select i {
-    font-size: 20px;
-    color: #E91E63;
+.location-select i.bi-geo-alt-fill {
+    font-size: 1.2rem;
+    color: #e63946;
     margin-right: 10px;
 }
 
 .address-select {
     border: none;
-    background: transparent;
-    font-size: 14px;
-    color: #333;
-    font-family: 'Poppins', sans-serif;
-    appearance: none;
     outline: none;
-    cursor: pointer;
+    width: 100%;
+    font-size: 0.95rem;
+    background: transparent;
+    color: #444;
+    padding-right: 40px;
 }
 
+.detect-btn {
+    position: absolute;
+    right: 10px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 50%;
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.3s ease;
+}
+
+.detect-btn:hover {
+    background: #f9f9f9;
+    transform: scale(1.05);
+}
 
 .hero h1 {
     font-size: 28px;
@@ -139,6 +158,63 @@ nav a i {
     color: #555;
     margin-top: 5px;
 }
+
+#nearbyFlorists {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.8rem;
+    margin-top: 1.5rem;
+    justify-items: center;
+}
+
+.florist-card {
+    background: #fff;
+    border-radius: 20px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+}
+
+.florist-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+}
+
+.florist-card img {
+    height: 220px;
+    width: 100%;
+    object-fit: cover;
+}
+
+.florist-card .card-body {
+    padding: 1.25rem;
+}
+
+.florist-card h5 {
+    font-weight: 600;
+    color: #333;
+}
+
+.florist-card p {
+    font-size: 0.9rem;
+    color: #777;
+    margin-bottom: 0.5rem;
+}
+
+.florist-card small {
+    display: block;
+    font-weight: 500;
+    color: #34a853;
+    font-size: 0.88rem;
+    margin-top: 0.25rem;
+}
+
+.florist-card small i,
+.florist-card small::before {
+    color: #34a853;
+}
+
 
 /* === HOW IT WORKS === */
 .how-it-works {

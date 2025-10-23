@@ -16,7 +16,7 @@ class FloristSeeder extends Seeder
         Florist::insert([
             [
                 'name' => 'Kaninara Florist',
-                'address' => 'Jl. Kaliurang Km. 13, Besi, Sleman, Yogyakarta',
+                'address' => 'Jl. Kaliurang No.Km 13, Besi, Sardonoharjo, Kec. Ngaglik, Kabupaten Sleman, Daerah Istimewa Yogyakarta 55581',
                 'city' => 'Yogyakarta',
                 'image' => 'uploads/florists/kaninara.png',
                 'open_time' => '09:00',
@@ -26,7 +26,7 @@ class FloristSeeder extends Seeder
             ],
             [
                 'name' => 'Ren Florist Co.',
-                'address' => 'Jl. Cendrawasih No.3 Mrican Caturtunggal Depok Sleman Yogyakarta',
+                'address' => 'Jl. Cenderawasih No.3, Mrican, Caturtunggal, Kec. Depok, Kabupaten Sleman, Daerah Istimewa Yogyakarta',
                 'city' => 'Yogyakarta',
                 'image' => 'uploads/florists/renflorist.png',
                 'open_time' => '09:00',
@@ -36,7 +36,7 @@ class FloristSeeder extends Seeder
             ],
             [
                 'name' => 'Kaning Bouquet and Gift Florist',
-                'address' => 'Jl. Gambir, Karangasem, Caturtunghgal, Depok, Sleman, Yogyakarta',
+                'address' => 'Jl. Gambir No.1, Karangasem, Caturtunggal, Kec. Depok, Kabupaten Sleman, Daerah Istimewa Yogyakarta',
                 'city' => 'Yogyakarta',
                 'image' => 'uploads/florists/kaning.png',
                 'open_time' => '08:00',
@@ -46,7 +46,7 @@ class FloristSeeder extends Seeder
             ],
             [
                 'name' => 'Beverly Florist Jogja',
-                'address' => 'Karang Gayam, Caturtunggal, Depok, Sleman, Yogyakarta',
+                'address' => 'Karang Gayam, Caturtunggal, Kec. Depok, Kabupaten Sleman, Daerah Istimewa Yogyakarta',
                 'city' => 'Yogyakarta',
                 'image' => 'uploads/florists/beverly.png',
                 'open_time' => '09:00',
@@ -56,7 +56,7 @@ class FloristSeeder extends Seeder
             ],
             [
                 'name' => 'Halia Florist',
-                'address' => 'Jl. Gambir Baru, Karangasem, Karang Gayam, Sleman, Yogyakarta',
+                'address' => 'Jl. Gambir Karangasem Baru, Karang Gayam, Caturtunggal, Kec. Depok, Kabupaten Sleman, Yogyakarta, Daerah Istimewa Yogyakarta',
                 'city' => 'Yogyakarta',
                 'image' => 'uploads/florists/beverly.png',
                 'open_time' => '09:00',
@@ -66,7 +66,7 @@ class FloristSeeder extends Seeder
             ],
             [
                 'name' => 'Lupy Florist',
-                'address' => 'Jl. Flamboyan No. 34D, Karang Gayam, Depok, Sleman Yogyakarta',
+                'address' => 'Jl. Flamboyan No.34D, Karang Gayam, Caturtunggal, Kec. Depok, Kabupaten Sleman, Daerah Istimewa Yogyakarta',
                 'city' => 'Yogyakarta',
                 'image' => 'uploads/florists/lupy.png',
                 'open_time' => '09:00',
