@@ -154,7 +154,7 @@
                         <div class="ms-3">
                             <p class="mb-0 fw-semibold" style="color:#e64b7d;">{{ $log['text'] }}</p>
                             <small class="text-muted">
-                                {{ $time ? $time->translatedFormat('d F Y, H:i') . ' WIB' : '-' }}
+                                {{ $time ? $time->translatedFormat('d F Y | H:i') . ' WIB' : '-' }}
                             </small>
                         </div>
                     </div>
