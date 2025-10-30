@@ -334,7 +334,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const container = document.getElementById('nearbyFlorists');
     const locationBox = document.querySelector('.location-search');
 
-    // 🕒 Cek status buka/tutup
     function getOpenStatus(florist) {
         if (florist.is_always_closed) return "closed";
 
@@ -351,7 +350,6 @@ document.addEventListener("DOMContentLoaded", () => {
         return now >= open && now <= close ? "open" : "closed";
     }
 
-    // 🧭 Render florist cards (dengan link & status open)
     function renderFlorists(data) {
         container.innerHTML = '';
 
@@ -403,7 +401,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // 🔍 Ambil florist dari API berdasarkan koordinat
     async function fetchFlorists(lat, lon) {
         try {
             const res = await fetch(`/user/nearby-florists?lat=${lat}&lon=${lon}`);
@@ -415,7 +412,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // 📍 Lokasi otomatis (Geolocation)
     detectBtn.addEventListener('click', () => {
         locationBox.classList.add('loading');
         container.innerHTML = `<p class="text-muted">⏳ Mencari lokasi kamu...</p>`;
@@ -445,7 +441,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // 🧍‍♀️ Input lokasi manual (tekan Enter)
     manualInput.addEventListener('keypress', async (e) => {
         if (e.key === 'Enter') {
             const query = manualInput.value.trim();
